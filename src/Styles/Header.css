@@ -1,0 +1,65 @@
+.header-container {
+    background-color: #8c0000; /* Cor de fundo vermelha da Fatec */
+    color: white;
+    padding: 10px 20px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 30px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #ffcc00; /* Cor de destaque ao passar o mouse */
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown .arrow-down {
+    font-size: 12px;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.search-bar input {
+    border: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-bar input::placeholder {
+    color: #a0a0a0;
+}
+
+.search-bar button {
+    background-color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #8c0000;
+}

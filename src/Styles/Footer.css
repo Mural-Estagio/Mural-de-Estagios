@@ -1,0 +1,79 @@
+.footer-container {
+    background-color: #8c0000; /* Cor de fundo vermelha da Fatec */
+    color: white;
+    padding: 30px 50px;
+    font-family: Arial, sans-serif;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid white;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.fatec-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fatec-link {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 24px;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #ffcc00; /* Cor de destaque ao passar o mouse */
+}
+
+.fatec-logos {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.fatec-logos .logo {
+    height: 60px; /* Ajuste o tamanho conforme necessário */
+}
+
+.footer-details {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    text-align: left;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    font-size: 14px;
+}
+
+.detail-icon {
+    font-size: 24px;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+}
