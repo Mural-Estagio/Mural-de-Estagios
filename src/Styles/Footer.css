@@ -1,79 +1,164 @@
+/* --- Estrutura Principal do Footer --- */
 .footer-container {
-    background-color: #8c0000; /* Cor de fundo vermelha da Fatec */
-    color: white;
-    padding: 30px 50px;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 20px 50px;
     font-family: Arial, sans-serif;
+    line-height: 1.5;
 }
 
+/* --- Seção Superior: Links e Logos --- */
 .footer-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid white;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .fatec-info {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
+    flex-grow: 1;
+    min-width: 200px;
 }
 
 .fatec-link {
-    color: white;
+    color: var(--text-light);
     text-decoration: none;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.fatec-link:hover {
+    color: var(--hover-color);
 }
 
 .social-icons {
     display: flex;
     gap: 15px;
+    margin-top: 5px;
 }
 
 .social-icons a {
-    color: white;
-    font-size: 24px;
-    transition: color 0.3s;
+    color: var(--text-light);
+    font-size: 22px;
+    transition: color 0.3s ease, transform 0.2s ease;
 }
 
 .social-icons a:hover {
-    color: #ffcc00; /* Cor de destaque ao passar o mouse */
+    color: var(--hover-color);
+    transform: translateY(-3px); /* Efeito flutuante */
 }
 
 .fatec-logos {
     display: flex;
     align-items: center;
     gap: 20px;
+    flex-shrink: 0;
 }
 
 .fatec-logos .logo {
-    height: 60px; /* Ajuste o tamanho conforme necessário */
+    height: 50px;
+    transition: transform 0.3s ease;
 }
 
+.fatec-logos .logo:hover {
+    transform: scale(1.05); /* Efeito de zoom sutil */
+}
+
+/* --- Seção de Detalhes: Contato e Endereço --- */
 .footer-details {
     display: flex;
     justify-content: space-around;
-    padding: 20px 0;
+    padding: 10px 0;
     text-align: left;
+    flex-wrap: wrap;
+    gap: 20px 40px;
 }
 
 .detail-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
+    font-size: 13px;
+    max-width: 300px;
+}
+
+.detail-item span {
     flex: 1;
-    font-size: 14px;
 }
 
 .detail-icon {
-    font-size: 24px;
+    font-size: 22px;
+    flex-shrink: 0;
 }
 
+/* --- Seção Inferior: Copyright --- */
 .footer-bottom {
     text-align: center;
-    padding-top: 20px;
+    padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 12px;
+    margin-top: 10px;
+}
+
+/* --- Media Queries para Responsividade --- */
+@media (max-width: 768px) {
+    .footer-container {
+        padding: 20px 30px;
+    }
+
+    .footer-top {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    .fatec-info {
+        align-items: center;
+    }
+
+    .fatec-logos {
+        margin-top: 15px;
+    }
+
+    .footer-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 0;
+    }
+
+    .detail-item {
+        max-width: 100%;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        padding: 15px 20px;
+    }
+
+    .fatec-link {
+        font-size: 14px;
+    }
+
+    .social-icons a {
+        font-size: 20px;
+    }
+
+    .fatec-logos .logo {
+        height: 40px;
+    }
+
+    .footer-bottom {
+        font-size: 10px;
+    }
 }

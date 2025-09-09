@@ -1,11 +1,16 @@
 import React from 'react';
-import Header from './Components/Header';
-import Footer from './Components/footer';
+import Header from './Header';
+import Footer from './Footer';
 
-const Layout = ({ children }) => {
+/**
+ * Componente Layout
+ * Responsável por renderizar a estrutura principal da página,
+ * incluindo o Header e o Footer, e exibir o conteúdo da página atual (children).
+ */
+const Layout = ({ children, toggleMobileMenu, cursos, documentos }) => {
     return (
         <div className="app-container">
-            <Header />
+            <Header toggleMobileMenu={toggleMobileMenu} cursos={cursos} documentos={documentos} />
             <main className="main-content">
                 {children}
             </main>

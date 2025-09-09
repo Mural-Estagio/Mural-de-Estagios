@@ -1,31 +1,37 @@
 import React from 'react';
-import './Styles/Footer.css';
+import '../Styles/Footer.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXTwitter, faInstagram, faYoutube, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faMapMarkerAlt, faPhone, faClock } from '@fortawesome/free-solid-svg-icons';
 
-import logoFatec from '../assets/fatec_logo_white.png'; // Make sure you have a white logo version
-import logoCPS from '../assets/cps_logo_white.png'; // Make sure you have a white logo version
+// Importa as imagens das logos
+import logoFatec from '../Assets/fatec_logo_white.png';
+import logoCPS from '../Assets/cps_logo_white.png';
 
 const Footer = () => {
     return (
         <footer className="footer-container">
             <div className="footer-content">
+                {/* Seção Superior: Links e Logos */}
                 <div className="footer-top">
                     <div className="fatec-info">
-                        <a href="https://lfateczl.cps.sp.gov.br/" className="fatec-link">https://lfateczl.cps.sp.gov.br/</a>
+                        <a href="https://lfateczl.cps.sp.gov.br/" target="_blank" rel="noopener noreferrer" className="fatec-link">
+                            https://lfateczl.cps.sp.gov.br/
+                        </a>
                         <div className="social-icons">
-                            <a href="#"><FontAwesomeIcon icon={faXTwitter} /></a>
-                            <a href="#"><FontAwesomeIcon icon={faInstagram} /></a>
-                            <a href="#"><FontAwesomeIcon icon={faYoutube} /></a>
-                            <a href="#"><FontAwesomeIcon icon={faLinkedin} /></a>
+                            <a href="#" aria-label="Twitter"><FontAwesomeIcon icon={faXTwitter} /></a>
+                            <a href="#" aria-label="Instagram"><FontAwesomeIcon icon={faInstagram} /></a>
+                            <a href="#" aria-label="Youtube"><FontAwesomeIcon icon={faYoutube} /></a>
+                            <a href="#" aria-label="LinkedIn"><FontAwesomeIcon icon={faLinkedin} /></a>
                         </div>
                     </div>
                     <div className="fatec-logos">
-                        <img src={logoFatec} alt="Fatec Zona Leste" className="logo fatec-logo" />
-                        <img src={logoCPS} alt="Centro Paula Souza" className="logo cps-logo" />
+                        <img src={logoFatec} alt="Logo da Fatec Zona Leste" className="logo fatec-logo" />
+                        <img src={logoCPS} alt="Logo do Centro Paula Souza" className="logo cps-logo" />
                     </div>
                 </div>
+
+                {/* Seção de Detalhes: Endereço, Telefone, Horário */}
                 <div className="footer-details">
                     <div className="detail-item">
                         <FontAwesomeIcon icon={faMapMarkerAlt} className="detail-icon" />
@@ -51,8 +57,10 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Seção Inferior: Copyright */}
             <div className="footer-bottom">
-                <p>© 2002/2025 - Centro Paula Souza - Desenvolvido por FatecZL - Todos os direitos reservados.</p>
+                <p>© 2002-2025 - Centro Paula Souza - Desenvolvido por FatecZL - Todos os direitos reservados.</p>
             </div>
         </footer>
     );

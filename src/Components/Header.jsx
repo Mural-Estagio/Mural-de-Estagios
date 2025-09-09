@@ -1,30 +1,52 @@
 import React from 'react';
-import './Styles/Header.css';
-import logoFatec from '../assets/fatec_logo.png';
-import searchIcon from '../assets/search_icon.png';
+import '../Styles/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 
-const Header = () => {
+// O Header recebe as props para controlar o menu mobile e popular os dropdowns
+const Header = ({ toggleMobileMenu, cursos, documentos }) => {
     return (
         <header className="header-container">
             <nav className="navbar">
+                {/* Botão de menu "hambúrguer" para telas menores */}
+                <button className="menu-toggle" onClick={toggleMobileMenu} aria-label="Abrir menu">
+                    <FontAwesomeIcon icon={faBars} />
+                </button>
+
+                {/* Logo principal ou link para a Home */}
+                <div className="navbar-left">
+                    <a href="/" className="nav-logo">Mural de Estágios</a>
+                </div>
+
+                {/* Links de navegação para desktop */}
                 <div className="navbar-links">
-                    <a href="#" className="nav-link">Mural de Estágios</a>
-                    <a href="#" className="nav-link">Vagas</a>
+                    <a href="/vagas" className="nav-link">Vagas</a>
+                    
                     <div className="dropdown">
                         <a href="#" className="nav-link">Cursos <span className="arrow-down">▼</span></a>
-                        {/* Dropdown content */}
+                        <div className="dropdown-content">
+                            {cursos.map(curso => (
+                                <a key={curso} href="#">{curso}</a>
+                            ))}
+                        </div>
                     </div>
+
                     <div className="dropdown">
                         <a href="#" className="nav-link">Documentos <span className="arrow-down">▼</span></a>
-                        {/* Dropdown content */}
+                        <div className="dropdown-content">
+                            {documentos.map(doc => (
+                                <a key={doc} href="#">{doc}</a>
+                            ))}
+                        </div>
                     </div>
-                    <a href="#" className="nav-link">Currículo</a>
+
+                    <a href="/curriculo" className="nav-link">Currículo</a>
                 </div>
+
+                {/* Barra de Pesquisa */}
                 <div className="search-bar">
                     <input type="text" placeholder="Pesquisar" />
-                    <button type="submit">
+                    <button type="submit" aria-label="Pesquisar">
                         <FontAwesomeIcon icon={faSearch} />
                     </button>
                 </div>
