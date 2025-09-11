@@ -224,7 +224,48 @@
     .navbar-links {
         display: none; 
     }
+@media (max-width: 950px) { 
+    .navbar-links {
+        display: none; 
+    }
 
+    
+    .search-bar {
+        display: none; 
+    }
+
+    .navbar-left {
+        position: absolute;   
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        flex-grow: 0; 
+    }
+
+    .navbar-left .nav-logo {
+        font-size: 1.3rem; 
+    }
+    
+    .menu-toggle {
+        display: block; 
+        background: none;
+        border: none;
+        color: var(--text-light);
+        font-size: 1.8rem;
+        cursor: pointer;
+        order: -1; /
+    }
+}
+
+@media (max-width: 550px) { 
+    .header-container {
+        padding: 10px 15px;
+    }
+
+    .navbar-left .nav-logo {
+        font-size: 1.1rem;
+    }
+}
     .search-bar {
         width: 180px; 
         margin-left: auto; 

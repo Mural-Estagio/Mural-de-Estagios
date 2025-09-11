@@ -1,6 +1,12 @@
+// src/App.jsx
 
 import React, { useState } from "react";
-import HomePage from "./Pages/Home.jsx"; 
+import { Routes, Route } from "react-router-dom";
+
+// Importação dos componentes de página e layout
+import HomePage from "./Pages/Home.jsx";
+import Vagas from "./Pages/Vagas.jsx";
+import Curriculo from "./Pages/Curriculo.jsx"; // 1. Importe a nova página
 import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
 import "./Styles/global.css";
@@ -8,22 +14,13 @@ import "./Styles/global.css";
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Dados que serão usados pelo Header e pelo MobileMenu
+  // Dados para os menus
   const cursos = [
-    "Análise e Desenvolvimento de Sistemas",
-    "Desenvolvimento de Software Multiplataforma",
-    "Comércio Exterior",
-    "Gestão Empresarial",
-    "Logística",
-    "Polímeros",
-    "Recursos Humanos",
-    "Desenvolvimento de Recursos Plásticos",
+    "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma",
+    "Comércio Exterior", "Gestão Empresarial", "Logística", "Polímeros",
+    "Recursos Humanos", "Desenvolvimento de Recursos Plásticos",
   ];
-
-  const documentos = [
-    "Estágio Obrigatório",
-    "Estágio Não Obrigatório"
-  ];
+  const documentos = ["Estágio Obrigatório", "Estágio Não Obrigatório"];
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -32,8 +29,13 @@ function App() {
   return (
     <>
       <Layout toggleMobileMenu={toggleMobileMenu} cursos={cursos} documentos={documentos}>
-        <HomePage /> 
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/vagas" element={<Vagas />} />
+          <Route path="/curriculo" element={<Curriculo />} /> {/* 2. Adicione a nova rota */}
+        </Routes>
       </Layout>
+      
       <MobileMenu
         isOpen={isMobileMenuOpen}
         toggleMenu={toggleMobileMenu}

@@ -1,0 +1,203 @@
+
+.curriculo-page {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* --- Estrutura e Animação de Seção --- */
+.curriculo-section {
+    padding: 80px 0;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.curriculo-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    color: var(--text-dark);
+    margin-bottom: 40px; 
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.section-description {
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* --- Seção Hero --- */
+.curriculo-hero {
+    background-color: #f0f0f0;
+}
+
+.curriculo-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    color: var(--text-dark);
+}
+
+.curriculo-subtitle {
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 15px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Seção de Dicas --- */
+.dicas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.dica-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dica-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.dica-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.dica-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.dica-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* --- Estrutura do Currículo --- */
+.estrutura-section {
+    background-color: var(--primary-color);
+}
+.estrutura-section .section-title {
+    color: white;
+}
+.estrutura-visual {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+.estrutura-item {
+    background-color: #f0f0f0;
+    border-left: 5px solid;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: bold;
+    color: var(--text-dark);
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+.estrutura-item:hover {
+    transform: translateX(10px);
+}
+.estrutura-item.header { border-color: #e74c3c; }
+.estrutura-item.resumo { border-color: #3498db; }
+.estrutura-item.experiencia { border-color: #f1c40f; }
+.estrutura-item.formacao { border-color: #9b59b6; }
+.estrutura-item.habilidades { border-color: #2ecc71; }
+.estrutura-item.extra { border-color: #e67e22; }
+
+
+/* ---  Erros a Evitar --- */
+.erros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+.erro-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #e74c3c;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: left;
+}
+.erro-icon {
+    font-size: 1.5rem;
+    color: #e74c3c;
+    float: left;
+    margin-right: 15px;
+}
+.erro-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+.erro-card p {
+    color: #666;
+    line-height: 1.5;
+    overflow: hidden;
+}
+
+/* --- Seção de Análise --- */
+.analise-section {
+    background-color: #f0f0f0;
+}
+
+.analise-icon {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 35px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin: 10px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    background-color: #a30000;
+}
+
+.cta-button.secondary {
+    background-color: #555;
+}
+
+.cta-button.secondary:hover {
+    background-color: #333;
+}
