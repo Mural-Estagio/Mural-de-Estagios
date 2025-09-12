@@ -1,0 +1,193 @@
+/* src/Styles/Documentos.css */
+
+/* --- Variáveis de Cor (Ajustadas para um visual mais limpo) --- */
+:root {
+    --primary-color: #007bff; /* Azul principal para detalhes */
+    --text-dark: #212529;     /* Preto um pouco mais suave para texto */
+    --text-medium: #555;      /* Cinza escuro para subtítulos */
+    --text-light: #777;       /* Cinza claro para texto menos importante */
+    --bg-light: #f8f9fa;      /* Fundo principal da página (cinza muito claro) */
+    --card-bg: #ffffff;       /* Fundo branco para os cards */
+    --card-shadow: rgba(0, 0, 0, 0.06);
+    --card-shadow-hover: rgba(0, 0, 0, 0.12);
+    --border-color: #e9ecef;  /* Cor da borda sutil */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+    background-color: var(--bg-light); /* Fundo consistente para a página inteira */
+}
+
+.documentos-page {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Estrutura e Animação de Seção --- */
+.documentos-section {
+    padding: 60px 0;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.documentos-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.section-warning {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+/* --- Seção Hero --- */
+.documentos-hero {
+    background-color: var(--card-bg); /* Fundo branco para um início limpo */
+    border-bottom: 1px solid var(--border-color); /* Linha sutil de separação */
+    padding: 80px 0;
+}
+
+.documentos-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    color: var(--text-dark); /* Texto escuro com alto contraste */
+}
+
+.documentos-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-medium); /* Cor do subtítulo mais escura */
+    margin-top: 15px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Grade de Documentos --- */
+.docs-grid {
+    display: grid;
+    /* Ajuste para centralizar: no máximo 3 colunas */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    /* Adicionamos um max-width para o grid não esticar demais em telas gigantes */
+    max-width: 900px; 
+    /* E centralizamos o próprio grid */
+    margin: 40px auto 0;
+}
+
+.doc-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--card-shadow);
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px; /* Altura do card reduzida */
+    border: 2px solid transparent; /* Borda transparente para o efeito de hover */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.doc-card:hover {
+    transform: translateY(-8px); /* Efeito de elevação mais sutil */
+    box-shadow: 0 8px 25px var(--card-shadow-hover);
+    /* Destaque no hover: adiciona uma borda com a cor primária */
+    border-color: var(--primary-color); 
+}
+
+.doc-icon {
+    font-size: 3rem; /* Tamanho do ícone reduzido */
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.doc-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.doc-card p {
+    font-size: 0.9rem;
+    color: var(--text-medium); /* Cor mais escura para melhor leitura */
+    min-height: 30px;
+}
+
+/* --- Seção de Contato --- */
+.contato-section {
+    background-color: var(--card-bg); /* Fundo branco para consistência */
+    border-top: 1px solid var(--border-color);
+}
+
+.contato-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.contato-email {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: var(--text-medium);
+}
+
+.contato-email a {
+    color: var(--primary-color);
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    margin-top: 5px;
+}
+
+.contato-email a:hover {
+    text-decoration: underline;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 920px) {
+    .docs-grid {
+        /* Em telas médias, o max-width pode ser ajustado se necessário */
+        max-width: 600px; /* Garante que tenhamos no máximo 2 colunas */
+    }
+}
+
+@media (max-width: 620px) {
+    .docs-grid {
+        /* Em telas pequenas, o grid terá apenas uma coluna */
+        grid-template-columns: 1fr;
+        max-width: 350px;
+    }
+    .documentos-title {
+        font-size: 2.8rem;
+    }
+}

@@ -100,12 +100,35 @@
 }
 
 /* --- Seção Inferior: Copyright --- */
+/* ATUALIZE ESTA CLASSE */
 .footer-bottom {
-    text-align: center;
+    display: flex; /* Adicionado para alinhar os itens */
+    justify-content: space-between; /* Coloca um item em cada ponta */
+    align-items: center; /* Alinha verticalmente */
+    flex-wrap: wrap; /* Permite que os itens quebrem a linha em telas pequenas */
+    gap: 15px; /* Adiciona um espaço caso quebrem a linha */
     padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 12px;
     margin-top: 10px;
+}
+
+/* ADICIONE ESTA NOVA CLASSE PARA O BOTÃO */
+.admin-login-link {
+    color: var(--text-light);
+    background-color: transparent;
+    border: 1px solid var(--text-light);
+    padding: 5px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.admin-login-link:hover {
+    background-color: var(--text-light);
+    color: var(--primary-color);
 }
 
 /* --- Media Queries para Responsividade --- */
@@ -139,6 +162,12 @@
         max-width: 100%;
         font-size: 14px;
     }
+
+    /* Adicionado para centralizar em telas menores */
+    .footer-bottom {
+        justify-content: center;
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -160,5 +189,9 @@
 
     .footer-bottom {
         font-size: 10px;
+    }
+    .admin-login-link {
+        font-size: 10px;
+        padding: 4px 10px;
     }
 }

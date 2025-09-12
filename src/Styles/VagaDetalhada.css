@@ -1,0 +1,118 @@
+/* src/Styles/VagaDetalhada.css */
+
+.vaga-detalhada-page {
+    padding: 40px 20px;
+    background-color: #f0f2f5; /* Fundo cinza claro */
+}
+
+.vaga-card-detalhado {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.vaga-caminho {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.vaga-caminho a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.vaga-caminho a:hover {
+    text-decoration: underline;
+}
+
+.vaga-titulo-principal {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.vaga-empresa {
+    font-size: 1.3rem;
+    color: #555;
+    font-weight: normal;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.vaga-info-geral {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 30px;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.vaga-info-geral span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vaga-secao {
+    margin-bottom: 30px;
+}
+
+.vaga-secao h3 {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+.vaga-secao p, .vaga-secao ul {
+    color: #555;
+    line-height: 1.7;
+}
+
+.vaga-secao ul {
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.ir-para-vaga-btn {
+    display: block;
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 40px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.ir-para-vaga-btn:hover {
+    background-color: #a30000;
+    transform: translateY(-2px);
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .vaga-card-detalhado {
+        padding: 20px;
+    }
+    .vaga-titulo-principal {
+        font-size: 1.8rem;
+    }
+    .vaga-empresa {
+        font-size: 1.1rem;
+    }
+}

@@ -1,25 +1,22 @@
 // src/App.jsx
-
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-
-// Importação dos componentes de página e layout
 import HomePage from "./Pages/Home.jsx";
 import Vagas from "./Pages/Vagas.jsx";
-import Curriculo from "./Pages/Curriculo.jsx"; // 1. Importe a nova página
+import Curriculo from "./Pages/Curriculo.jsx";
+import AdmCadastrar from "./Pages/AdmCadastrar.jsx";
+import LoginPage from "./Pages/Login.jsx";
+import Documentos from "./Pages/Documentos.jsx";
+import VagaDetalhada from "./Pages/VagaDetalhada.jsx"; // 1. Importe a nova página
 import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
 import "./Styles/global.css";
 
+
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Dados para os menus
-  const cursos = [
-    "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma",
-    "Comércio Exterior", "Gestão Empresarial", "Logística", "Polímeros",
-    "Recursos Humanos", "Desenvolvimento de Recursos Plásticos",
-  ];
+  const cursos = [ "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma", "Comércio Exterior", "Gestão Empresarial", "Logística", "Polímeros", "Recursos Humanos", "Desenvolvimento de Produtos Plásticos" ];
   const documentos = ["Estágio Obrigatório", "Estágio Não Obrigatório"];
 
   const toggleMobileMenu = () => {
@@ -32,7 +29,11 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/vagas" element={<Vagas />} />
-          <Route path="/curriculo" element={<Curriculo />} /> {/* 2. Adicione a nova rota */}
+          <Route path="/vagas/:vagaId" element={<VagaDetalhada />} /> {/* 2. Adicione a rota dinâmica */}
+          <Route path="/curriculo" element={<Curriculo />} />
+          <Route path="/admin/cadastrar" element={<AdmCadastrar />} />
+          <Route path="/admin/Login" element={<LoginPage />} />
+          <Route path="/Documentos" element={<Documentos />} />
         </Routes>
       </Layout>
       

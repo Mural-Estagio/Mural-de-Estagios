@@ -1,4 +1,6 @@
 import React from 'react';
+// Adicione a importação do Link
+import { Link } from 'react-router-dom';
 import '../Styles/Footer.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXTwitter, faInstagram, faYoutube, faLinkedin } from '@fortawesome/free-brands-svg-icons';
@@ -58,9 +60,13 @@ const Footer = () => {
                 </div>
             </div>
 
-            {/* Seção Inferior: Copyright */}
+            {/* Seção Inferior: Copyright e Login Admin */}
             <div className="footer-bottom">
                 <p>© 2002-2025 - Centro Paula Souza - Desenvolvido por FatecZL - Todos os direitos reservados.</p>
+                {/* BOTÃO ADICIONADO AQUI */}
+                <Link to="/admin/Login" className="admin-login-link">
+                    Login Administrador
+                </Link>
             </div>
         </footer>
     );

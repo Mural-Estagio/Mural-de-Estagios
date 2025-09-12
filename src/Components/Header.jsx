@@ -31,14 +31,7 @@ const Header = ({ toggleMobileMenu, cursos, documentos }) => {
                         </div>
                     </div>
 
-                    <div className="dropdown">
-                        <a href="#" className="nav-link">Documentos <span className="arrow-down">▼</span></a>
-                        <div className="dropdown-content">
-                            {documentos.map(doc => (
-                                <a key={doc} href="#">{doc}</a>
-                            ))}
-                        </div>
-                    </div>
+                       <a href="/Documentos" className="nav-link">Documentos</a>
 
                     <a href="/curriculo" className="nav-link">Currículo</a>
                 </div>

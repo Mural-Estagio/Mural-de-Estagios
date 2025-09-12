@@ -52,7 +52,7 @@ const JobCard = ({ vaga }) => {
                 <p>{vaga.description}</p>
             </div>
             <div className="card-footer">
-                <a href="#" className="confirm-button">Confira</a>
+                <a href="/vagas/:vagaId" className="confirm-button">Confira</a>
                 <span>{vaga.date}</span>
             </div>
         </div>
