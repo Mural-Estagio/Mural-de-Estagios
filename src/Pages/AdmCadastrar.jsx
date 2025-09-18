@@ -1,5 +1,3 @@
-// src/Pages/AdmCadastrar.jsx
-
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons';
@@ -25,8 +23,6 @@ const Modal = ({ children, isOpen, onClose }) => {
 const FormularioVaga = () => (
     <form className="admin-form">
         <h2>Cadastrar Nova Vaga</h2>
-        
-        {/* Todos os campos de texto agora ficam em uma única coluna */}
         <div className="form-fields">
             <label>Empresa <input type="text" placeholder="Ex: Microsoft" /></label>
             <label>Vaga <input type="text" placeholder="Ex: Estágio em Desenvolvimento" /></label>
@@ -63,7 +59,6 @@ const FormularioVaga = () => (
 
 // --- Formulário de Cadastro de Evento ---
 const FormularioEvento = () => (
-    // ... O formulário de evento continua o mesmo
     <form className="admin-form">
         <h2>Cadastrar Novo Evento</h2>
         <div className="form-grid">

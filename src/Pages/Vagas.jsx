@@ -146,7 +146,7 @@ const Vagas = () => {
                             value={filters.salaryRange}
                             onChange={handleSalaryChange}
                             pearling
-                            minDistance={500} // impede sobreposição
+                            minDistance={500} 
                         />
                     </div>
 

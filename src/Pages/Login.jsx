@@ -13,12 +13,9 @@ const LoginPage = () => {
 
     // Simulação de login
     const handleLogin = (e) => {
-        e.preventDefault(); // Impede o recarregamento da página
-
-        // No futuro, aqui você faria uma chamada para o backend
+        e.preventDefault(); 
         if (username === 'admin' && password === 'admin123') {
             setError('');
-            // Redireciona para a página de cadastro em caso de sucesso
             navigate('/admin/cadastrar');
         } else {
             setError('Usuário ou senha inválidos.');

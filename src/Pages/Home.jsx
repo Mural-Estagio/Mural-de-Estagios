@@ -55,10 +55,6 @@ const AnimatedSection = ({ children, className }) => {
 };
 
 
-/**
- * Componente principal da página Home (HomePage)
- * Contém todas as seções da página inicial.
- */
 const HomePage = () => {
     const courses = [
         "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma",

@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import '../Styles/Documentos.css'; // Novo arquivo de estilo que vamos criar
+import '../Styles/Documentos.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileDownload, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
-// Componente reutilizável para animar seções ao rolar a página
 const AnimatedSection = ({ children, className }) => {
     const sectionRef = useRef(null);
     useEffect(() => {
@@ -25,7 +24,6 @@ const AnimatedSection = ({ children, className }) => {
 };
 
 const Documentos = () => {
-    // Listas de documentos para cada tipo de estágio
     const estagioObrigatorioDocs = [
         { nome: 'Fluxograma', subtitulo: 'Estágio Obrigatório', link: './Documentos/Fluxograma Estágio Obrigatório.pdf' },
         { nome: 'Cronograma', subtitulo: 'Estágio Obrigatório', link: '/Documentos/Cronograma Estágio 20222.docx' },

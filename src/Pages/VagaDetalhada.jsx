@@ -47,9 +47,6 @@ const vagaExemplo = {
 };
 
 const VagaDetalhada = () => {
-    // No futuro, usaríamos o `useParams` para pegar o ID da URL e buscar a vaga
-    // const { vagaId } = useParams();
-    // Por enquanto, apenas exibimos a vaga de exemplo
     const vaga = vagaExemplo;
 
     return (
