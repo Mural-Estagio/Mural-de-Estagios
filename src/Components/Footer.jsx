@@ -1,12 +1,10 @@
 import React from 'react';
-// Adicione a importação do Link
 import { Link } from 'react-router-dom';
 import '../Styles/Footer.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXTwitter, faInstagram, faYoutube, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faMapMarkerAlt, faPhone, faClock } from '@fortawesome/free-solid-svg-icons';
 
-// Importa as imagens das logos
 import logoFatec from '../Assets/fatec_logo_white.png';
 import logoCPS from '../Assets/cps_logo_white.png';
 
@@ -17,8 +15,8 @@ const Footer = () => {
                 {/* Seção Superior: Links e Logos */}
                 <div className="footer-top">
                     <div className="fatec-info">
-                        <a href="https://lfateczl.cps.sp.gov.br/" target="_blank" rel="noopener noreferrer" className="fatec-link">
-                            https://lfateczl.cps.sp.gov.br/
+                        <a href="https://fateczl.cps.sp.gov.br/" target="_blank" rel="noopener noreferrer" className="fatec-link">
+                            https://fateczl.cps.sp.gov.br/
                         </a>
                         <div className="social-icons">
                             <a href="#" aria-label="Twitter"><FontAwesomeIcon icon={faXTwitter} /></a>
