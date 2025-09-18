@@ -29,18 +29,18 @@ const Documentos = () => {
     const estagioObrigatorioDocs = [
         { nome: 'Fluxograma', subtitulo: 'Estágio Obrigatório', link: './Documentos/Fluxograma Estágio Obrigatório.pdf' },
         { nome: 'Cronograma', subtitulo: 'Estágio Obrigatório', link: '/Documentos/Cronograma Estágio 20222.docx' },
-        { nome: 'Requerimento', subtitulo: 'Estágio Supervisionado', link: '/Documentos/Requerimento.docx' },
+        { nome: 'Requerimento', subtitulo: 'Estágio Supervisionado', link: '/Documentos/Requerimento de Estágio Supervisionado 20222.doc' },
         { nome: 'Regulamento', subtitulo: 'Estágio Supervisionado', link: '/Documentos/Regulamento de Estágio supervisionado 20222.docx' },
-        { nome: 'Anexo I', subtitulo: 'Estágio Remunerado', link: '/Documentos/Anexo I Relatorio de Estágio Supervisionado 20222.docx' },
-        { nome: 'Anexo II', subtitulo: 'CLT, Autônomo, etc.', link: '/Documentos/Anexo II Relatório de Prática Profissional 20222.docx' },
-        { nome: 'Anexo III', subtitulo: 'Estágio Não Remunerado', link: '/Documentos/Anexo III Relatório de Estágio Voluntário 20222.docx' },
+        { nome: 'Anexo I', subtitulo: 'Estágio Remunerado', link: '/Documentos/Anexo I Relatorio de Estágio Supervisionado 20222.doc' },
+        { nome: 'Anexo II', subtitulo: 'CLT, Autônomo, etc.', link: '/Documentos/Anexo II Relatório de Prática Profissional 20222.doc' },
+        { nome: 'Anexo III', subtitulo: 'Estágio Não Remunerado', link: '/Documentos/Anexo III Relatório de Estágio Voluntário 20222.doc' },
     ];
     const estagioNaoObrigatorioDocs = [
         { nome: 'Fluxograma', subtitulo: 'Estágio Não Obrigatório', link: '/Documentos/Fluxograma Estágio não Obrigatório .pdf' },
-        { nome: 'Termo de Compromisso', subtitulo: '', link: '/Documentos/ termo de compromisso de estagio 20202.docx' },
+        { nome: 'Termo de Compromisso', subtitulo: '', link: '/Documentos/termo de compromisso de estágio 20202.docx' },
         { nome: 'Aditivo do Termo', subtitulo: 'de Compromisso', link: '/Documentos/Aditivo do Termo de Compromisso de Estágio 20202.docx' },
-        { nome: 'Termo de Rescisão', subtitulo: 'do TCE', link: '/Documentos/Rescisão do TCE - 2019 atual.docx' },
-        { nome: 'Convênio de Concessão', subtitulo: 'do Estágio', link: '/Documentos/convenio de concessao de estagio 20221.docx' },
+        { nome: 'Termo de Rescisão', subtitulo: 'do TCE', link: '/Documentos/Rescisão do TCE - 2019 atual.doc' },
+        { nome: 'Convênio de Concessão', subtitulo: 'do Estágio', link: '/Documentos/convenio de concessao de estagio 20221.doc' },
     ];
 
     return (
