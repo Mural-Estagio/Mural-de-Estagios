@@ -30,6 +30,7 @@ const FormularioVaga = () => (
         <div className="form-fields">
             <label>Empresa <input type="text" placeholder="Ex: Microsoft" /></label>
             <label>Vaga <input type="text" placeholder="Ex: Estágio em Desenvolvimento" /></label>
+            <label>Salário <input type="text" placeholder="Ex: 2500, A combinar..." /></label>
             <label>Período (Horário) <input type="text" placeholder="Ex: 6 horas/dia" /></label>
             <label>Canal <input type="text" placeholder="Ex: Gupy, CIEE, etc" /></label>
             <label>Link <input type="url" placeholder="https://..." /></label>

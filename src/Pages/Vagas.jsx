@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactSlider from 'react-slider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css';
@@ -14,8 +15,8 @@ const mockVagas = [
     { id: 6, title: 'Estágio em RH', company: 'Natura', logo: 'https://img.icons8.com/color/48/rebrandly.png', date: '30/08/2025', shift: 'Manhã', salary: 1500, course: 'Gestão de Recursos Humanos', skills: ['Word', 'Comunicação'] },
 ];
 
-const cursosFiltro = [ "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma", "Comércio Exterior", "Gestão de Recursos Humanos", "Gestão Empresarial", "Polímeros", "Logística", "Desenvolvimento de Produtos Plásticos" ];
-const habilidadesFiltro = [  'Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização', 'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol', 'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript', 'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git', 'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis', 'Química', 'Processos Industriais', 'Negociação'  ];
+const cursosFiltro = ["Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma", "Comércio Exterior", "Gestão de Recursos Humanos", "Gestão Empresarial", "Polímeros", "Logística", "Desenvolvimento de Produtos Plásticos"];
+const habilidadesFiltro = ['Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização', 'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol', 'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript', 'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git', 'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis', 'Química', 'Processos Industriais', 'Negociação'];
 
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
@@ -40,6 +41,7 @@ const JobCard = ({ vaga }) => {
                 <div className="card-title">
                     <h3>{vaga.title}</h3>
                     <p>{vaga.company}</p>
+                    <p>R$ {vaga.salary}</p>
                 </div>
                 <div className="options-container">
                     <button className="options-btn" aria-label="Mais opções" onClick={handleShare}>
@@ -63,10 +65,14 @@ const Vagas = () => {
     const [filters, setFilters] = useState({
         searchTerm: '',
         shift: { manha: false, tarde: false, noite: false },
-        salary: 9999, 
+        salaryRange: [500, 9999],
         courses: [],
         skills: []
     });
+
+    const handleSalaryChange = (newRange) => {
+        setFilters(prev => ({ ...prev, salaryRange: newRange }));
+    };
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -87,13 +93,14 @@ const Vagas = () => {
             setFilters(prev => ({ ...prev, [name]: value }));
         }
     };
-    
+
     const filteredVagas = mockVagas.filter(vaga => {
         const { searchTerm, shift, salary, courses, skills } = filters;
 
         const searchTermMatch = !searchTerm || vaga.title.toLowerCase().includes(searchTerm.toLowerCase()) || vaga.company.toLowerCase().includes(searchTerm.toLowerCase());
         const shiftMatch = (!shift.manha && !shift.tarde && !shift.noite) || (shift.manha && vaga.shift === 'Manhã') || (shift.tarde && vaga.shift === 'Tarde') || (shift.noite && vaga.shift === 'Noite');
-        const salaryMatch = vaga.salary <= salary;
+        const [min, max] = filters.salaryRange;
+        const salaryMatch = vaga.salary >= min && vaga.salary <= max;
         const courseMatch = courses.length === 0 || courses.includes(vaga.course);
         const skillsMatch = skills.length === 0 || skills.every(skill => vaga.skills.includes(skill));
 
@@ -112,39 +119,51 @@ const Vagas = () => {
                     <div className="filter-group">
                         <input type="text" name="searchTerm" placeholder="Busque por cargo ou empresa..." className="search-input" value={filters.searchTerm} onChange={handleInputChange} />
                     </div>
-                    
+
                     <div className="filter-group">
                         <h4>Turno</h4>
                         <div className="checkbox-group">
-                            <label><input type="checkbox" name="manha" checked={filters.shift.manha} onChange={handleInputChange}/> Manhã</label>
-                            <label><input type="checkbox" name="tarde" checked={filters.shift.tarde} onChange={handleInputChange}/> Tarde</label>
-                            <label><input type="checkbox" name="noite" checked={filters.shift.noite} onChange={handleInputChange}/> Noite</label>
+                            <label><input type="checkbox" name="manha" checked={filters.shift.manha} onChange={handleInputChange} /> Manhã</label>
+                            <label><input type="checkbox" name="tarde" checked={filters.shift.tarde} onChange={handleInputChange} /> Tarde</label>
+                            <label><input type="checkbox" name="noite" checked={filters.shift.noite} onChange={handleInputChange} /> Noite</label>
                         </div>
                     </div>
-                    
-                    <div className="filter-group">
+
+                     <div className="filter-group">
                         <h4>Faixa Salarial</h4>
-                        <div className="salary-slider">
-                            <span>R$ 500</span>
-                            <span>Até R$ {filters.salary}</span>
+                        <div className="salary-slider-labels">
+                            <span>Mínimo: R$ {filters.salaryRange[0]}</span>
+                            <span>Máximo: R$ {filters.salaryRange[1]}</span>
                         </div>
-                        <input type="range" name="salary" min="500" max="9999" step="100" className="slider" value={filters.salary} onChange={handleInputChange} />
+
+                        <ReactSlider
+                            className="salary-range-slider"
+                            thumbClassName="slider-thumb"
+                            trackClassName="slider-track"
+                            min={500}
+                            max={9999}
+                            step={100}
+                            value={filters.salaryRange}
+                            onChange={handleSalaryChange}
+                            pearling
+                            minDistance={500} // impede sobreposição
+                        />
                     </div>
 
                     <div className="filter-group">
                         <h4>Cursos</h4>
                         <div className="checkbox-group scrollable">
                             {cursosFiltro.map(curso => (
-                                <label key={curso}><input type="checkbox" name="course" value={curso} onChange={handleInputChange}/> {curso}</label>
+                                <label key={curso}><input type="checkbox" name="course" value={curso} onChange={handleInputChange} /> {curso}</label>
                             ))}
                         </div>
                     </div>
-                    
+
                     <div className="filter-group">
                         <h4>Habilidades</h4>
                         <div className="checkbox-group scrollable">
                             {habilidadesFiltro.map(skill => (
-                                <label key={skill}><input type="checkbox" name="skill" value={skill} onChange={handleInputChange}/> {skill}</label>
+                                <label key={skill}><input type="checkbox" name="skill" value={skill} onChange={handleInputChange} /> {skill}</label>
                             ))}
                         </div>
                     </div>
