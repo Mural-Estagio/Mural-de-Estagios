@@ -40,7 +40,7 @@
     margin-top: 10px;
 }
 
-/* --- Seção de Cursos (CORREÇÃO DA GRADE) --- */
+/* --- Seção de Cursos --- */
 .courses-section {
     background-color: var(--primary-color);
 }
@@ -196,7 +196,7 @@
     opacity: 1;
 }
 
-/* --- Seção de Currículos  --- */
+/* --- Seção de Currículos --- */
 .resumes-section {
     background-color: var(--primary-color);
 }
@@ -249,7 +249,7 @@
 
 .cta-button:hover {
     transform: scale(1.05);
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; 
 }
 
 /* --- Seção de Documentos --- */
