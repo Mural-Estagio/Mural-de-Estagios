@@ -2,16 +2,19 @@ import React, { useEffect, useRef } from 'react';
 import Slider from 'react-slick';
 
 // Importação dos estilos do carrossel e da página
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import '../Styles/HomePage.css';
 
 // Importação dos ícones
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faFileSignature, faFileAlt, faArrowRight, 
-    faGraduationCap, faBriefcase, faChalkboardTeacher 
+import {
+    faFileSignature, faFileAlt, faArrowRight,
+    faGraduationCap, faBriefcase, faChalkboardTeacher
 } from '@fortawesome/free-solid-svg-icons';
+
+const imageModules = import.meta.glob('../Assets/HomeImages/*.{jpg,jpeg,png,gif}', { eager: true });
+const homeImages = Object.values(imageModules).map(mod => mod.default);
 
 /**
  * Componente reutilizável que aplica uma animação de fade-in
@@ -54,7 +57,6 @@ const AnimatedSection = ({ children, className }) => {
     );
 };
 
-
 const HomePage = () => {
     const courses = [
         "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma",
@@ -80,18 +82,41 @@ const HomePage = () => {
         <div className="homepage-container">
             {/* --- Seção Hero --- */}
             <AnimatedSection className="hero-section">
-                <div className="section-container">
+                <div className="hero-carousel-wrapper">
+                    <Slider
+                        dots={false}
+                        infinite={true}
+                        speed={1000}
+                        slidesToShow={1}
+                        slidesToScroll={1}
+                        autoplay={true}
+                        autoplaySpeed={4000}
+                        fade={true}
+                        arrows={false}
+                        className="hero-carousel"
+                    >
+                        {homeImages.map((src, index) => (
+                            <div key={index} className="hero-slide">
+                                <img src={src} alt={`Slide ${index + 1}`} className="hero-image" />
+                            </div>
+                        ))}
+                    </Slider>
+                </div>
+                <div className="section-container hero-overlay">
                     <h1 className="hero-title">Mural de Estágios</h1>
                     <p className="hero-subtitle">Fatec Zona Leste: Inspirar, Educar, Transformar.</p>
                 </div>
             </AnimatedSection>
 
-            {/* --- Seção de Cursos --- */}
             <AnimatedSection className="courses-section">
                 <div className="section-container">
                     <div className="course-cards-grid">
                         {courses.map(course => (
-                            <a href="/vagas" key={course} className="course-card">
+                            <a
+                                href={`/vagas?curso=${encodeURIComponent(course)}`}
+                                key={course}
+                                className="course-card"
+                            >
                                 <h3>{course}</h3>
                                 <span>Vagas <FontAwesomeIcon icon={faArrowRight} /></span>
                             </a>
@@ -126,13 +151,13 @@ const HomePage = () => {
                     </div>
                 </div>
             </AnimatedSection>
-            
+
             {/* --- Seção de Eventos --- */}
             <AnimatedSection className="events-section">
                 <div className="section-container">
                     <h2 className="section-title">Eventos</h2>
                     <p className="section-description">
-                        Fique por dentro de tudo que acontece na Fatec Zona Leste, 
+                        Fique por dentro de tudo que acontece na Fatec Zona Leste,
                         dos eventos acadêmicos às oportunidades do mural de estágios.
                     </p>
                 </div>
@@ -162,7 +187,7 @@ const HomePage = () => {
                     </div>
                 </div>
             </AnimatedSection>
-            
+
             {/* --- Seção de Documentos --- */}
             <AnimatedSection className="documents-section">
                 <div className="section-container">
