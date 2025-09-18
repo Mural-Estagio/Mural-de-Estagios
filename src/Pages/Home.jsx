@@ -162,7 +162,7 @@ const HomePage = () => {
                             Aprenda a criar um currículo que chama a atenção dos recrutadores.
                             Confira nossas dicas exclusivas e análises para melhorar suas chances em vagas e estágios.
                         </p>
-                        <a href="/curriculo-dicas" className="cta-button">Ver Dicas e Análises</a>
+                        <a href="/curriculo" className="cta-button">Ver Dicas e Análises</a>
                     </div>
                 </div>
             </AnimatedSection>
