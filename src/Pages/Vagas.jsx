@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ReactSlider from 'react-slider';
+import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css';
 
 // --- Dados Fictícios (Mock Data) ---
-// No futuro, estes dados virão de um backend/API.
 const mockVagas = [
     { id: 1, title: 'Analista de Sistema Pleno', company: 'Microsoft', logo: 'https://img.icons8.com/color/48/microsoft.png', date: '05/09/2025', shift: 'Tarde', salary: 2500, course: 'Análise e Desenvolvimento de Sistemas', skills: ['SQL', 'Java', 'Gestão de Projetos'] },
     { id: 2, title: 'Estágio TI: Desenvolvedor Back-End', company: 'Microsoft', logo: 'https://img.icons8.com/color/48/microsoft.png', date: '04/09/2025', shift: 'Manhã', salary: 1800, course: 'Desenvolvimento de Software Multiplataforma', skills: ['Node.js', 'API', 'Banco de Dados'] },
@@ -54,7 +54,7 @@ const JobCard = ({ vaga }) => {
                 <p>{vaga.description}</p>
             </div>
             <div className="card-footer">
-                <a href="/vagas/:vagaId" className="confirm-button">Confira</a>
+                <a href={`/vagas/${vaga.id}`} className="confirm-button">Confira</a>
                 <span>{vaga.date}</span>
             </div>
         </div>
@@ -62,13 +62,26 @@ const JobCard = ({ vaga }) => {
 };
 
 const Vagas = () => {
+    const location = useLocation();
+
+    // Lê parâmetro da URL (ex: /vagas?curso=Logística)
+    const queryParams = new URLSearchParams(location.search);
+    const cursoSelecionado = queryParams.get("curso");
+
     const [filters, setFilters] = useState({
         searchTerm: '',
         shift: { manha: false, tarde: false, noite: false },
         salaryRange: [500, 9999],
-        courses: [],
+        courses: cursoSelecionado ? [cursoSelecionado] : [],
         skills: []
     });
+
+    // Marca automaticamente o checkbox do curso selecionado
+    useEffect(() => {
+        if (cursoSelecionado) {
+            setFilters(prev => ({ ...prev, courses: [cursoSelecionado] }));
+        }
+    }, [cursoSelecionado]);
 
     const handleSalaryChange = (newRange) => {
         setFilters(prev => ({ ...prev, salaryRange: newRange }));
@@ -95,11 +108,11 @@ const Vagas = () => {
     };
 
     const filteredVagas = mockVagas.filter(vaga => {
-        const { searchTerm, shift, salary, courses, skills } = filters;
+        const { searchTerm, shift, salaryRange, courses, skills } = filters;
 
         const searchTermMatch = !searchTerm || vaga.title.toLowerCase().includes(searchTerm.toLowerCase()) || vaga.company.toLowerCase().includes(searchTerm.toLowerCase());
         const shiftMatch = (!shift.manha && !shift.tarde && !shift.noite) || (shift.manha && vaga.shift === 'Manhã') || (shift.tarde && vaga.shift === 'Tarde') || (shift.noite && vaga.shift === 'Noite');
-        const [min, max] = filters.salaryRange;
+        const [min, max] = salaryRange;
         const salaryMatch = vaga.salary >= min && vaga.salary <= max;
         const courseMatch = courses.length === 0 || courses.includes(vaga.course);
         const skillsMatch = skills.length === 0 || skills.every(skill => vaga.skills.includes(skill));
@@ -117,7 +130,14 @@ const Vagas = () => {
                 {/* --- Painel de Filtros Lateral --- */}
                 <aside className="filter-sidebar">
                     <div className="filter-group">
-                        <input type="text" name="searchTerm" placeholder="Busque por cargo ou empresa..." className="search-input" value={filters.searchTerm} onChange={handleInputChange} />
+                        <input
+                            type="text"
+                            name="searchTerm"
+                            placeholder="Busque por cargo ou empresa..."
+                            className="search-input"
+                            value={filters.searchTerm}
+                            onChange={handleInputChange}
+                        />
                     </div>
 
                     <div className="filter-group">
@@ -129,7 +149,7 @@ const Vagas = () => {
                         </div>
                     </div>
 
-                     <div className="filter-group">
+                    <div className="filter-group">
                         <h4>Faixa Salarial</h4>
                         <div className="salary-slider-labels">
                             <span>Mínimo: R$ {filters.salaryRange[0]}</span>
@@ -146,7 +166,7 @@ const Vagas = () => {
                             value={filters.salaryRange}
                             onChange={handleSalaryChange}
                             pearling
-                            minDistance={500} 
+                            minDistance={500}
                         />
                     </div>
 
@@ -154,7 +174,15 @@ const Vagas = () => {
                         <h4>Cursos</h4>
                         <div className="checkbox-group scrollable">
                             {cursosFiltro.map(curso => (
-                                <label key={curso}><input type="checkbox" name="course" value={curso} onChange={handleInputChange} /> {curso}</label>
+                                <label key={curso}>
+                                    <input
+                                        type="checkbox"
+                                        name="course"
+                                        value={curso}
+                                        checked={filters.courses.includes(curso)}
+                                        onChange={handleInputChange}
+                                    /> {curso}
+                                </label>
                             ))}
                         </div>
                     </div>
@@ -163,7 +191,15 @@ const Vagas = () => {
                         <h4>Habilidades</h4>
                         <div className="checkbox-group scrollable">
                             {habilidadesFiltro.map(skill => (
-                                <label key={skill}><input type="checkbox" name="skill" value={skill} onChange={handleInputChange} /> {skill}</label>
+                                <label key={skill}>
+                                    <input
+                                        type="checkbox"
+                                        name="skill"
+                                        value={skill}
+                                        checked={filters.skills.includes(skill)}
+                                        onChange={handleInputChange}
+                                    /> {skill}
+                                </label>
                             ))}
                         </div>
                     </div>
