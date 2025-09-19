@@ -7,6 +7,8 @@ import Curriculo from "./Pages/Curriculo.jsx";
 import AdmCadastrar from "./Pages/AdmCadastrar.jsx";
 import LoginPage from "./Pages/Login.jsx";
 import Documentos from "./Pages/Documentos.jsx";
+import DocumentosObrigatorios from "./Pages/DocumentosObrigatorios.jsx";
+import DocumentosNaoObrigatorios from "./Pages/DocumentosNaoObrigatorios.jsx";
 import VagaDetalhada from "./Pages/VagaDetalhada.jsx"; // 1. Importe a nova página
 import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
@@ -33,7 +35,9 @@ function App() {
           <Route path="/curriculo" element={<Curriculo />} />
           <Route path="/admin/cadastrar" element={<AdmCadastrar />} />
           <Route path="/admin/Login" element={<LoginPage />} />
-          <Route path="/Documentos" element={<Documentos />} />
+          <Route path="/documentos" element={<Documentos />} />
+          <Route path="/documentos-obrigatorios" element={<DocumentosObrigatorios />} />
+          <Route path="/documentos-nao-obrigatorios" element={<DocumentosNaoObrigatorios />} />
         </Routes>
       </Layout>
       

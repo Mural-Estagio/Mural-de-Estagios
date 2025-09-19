@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 
 // O Header recebe as props para controlar o menu mobile e popular os dropdowns
-const Header = ({ toggleMobileMenu, cursos, documentos }) => {
+const Header = ({ toggleMobileMenu, cursos}) => {
     return (
         <header className="header-container">
             <nav className="navbar">
@@ -31,7 +31,7 @@ const Header = ({ toggleMobileMenu, cursos, documentos }) => {
                         </div>
                     </div>
 
-                       <a href="/Documentos" className="nav-link">Documentos</a>
+                       <a href="/documentos" className="nav-link">Documentos</a>
 
                     <a href="/curriculo" className="nav-link">Currículo</a>
                 </div>

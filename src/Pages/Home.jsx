@@ -193,11 +193,11 @@ const HomePage = () => {
                 <div className="section-container">
                     <h2 className="section-title">Documentos</h2>
                     <div className="document-options">
-                        <a href="/documentos-obrigatorio" className="document-card">
+                        <a href="/documentos-obrigatorios" className="document-card">
                             <FontAwesomeIcon icon={faFileSignature} className="document-icon" />
                             <h3>Estágio Obrigatório</h3>
                         </a>
-                        <a href="/documentos-nao-obrigatorio" className="document-card">
+                        <a href="/documentos-nao-obrigatorios" className="document-card">
                             <FontAwesomeIcon icon={faFileAlt} className="document-icon" />
                             <h3>Estágio Não Obrigatório</h3>
                         </a>
