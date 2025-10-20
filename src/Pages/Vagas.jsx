@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import ReactSlider from 'react-slider';
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css';
+import API_URL from '../apiConfig'; // Importando a URL da API
 
-// --- Dados Fictícios (Mock Data) ---
-const mockVagas = [
-    { id: 1, title: 'Analista de Sistema Pleno', company: 'Microsoft', logo: 'https://img.icons8.com/color/48/microsoft.png', date: '05/09/2025', shift: 'Tarde', salary: 2500, course: 'Análise e Desenvolvimento de Sistemas', skills: ['SQL', 'Java', 'Gestão de Projetos'] },
-    { id: 2, title: 'Estágio TI: Desenvolvedor Back-End', company: 'Microsoft', logo: 'https://img.icons8.com/color/48/microsoft.png', date: '04/09/2025', shift: 'Manhã', salary: 1800, course: 'Desenvolvimento de Software Multiplataforma', skills: ['Node.js', 'API', 'Banco de Dados'] },
-    { id: 3, title: 'Analista de Sistema Jr', company: 'Google', logo: 'https://img.icons8.com/color/48/google-logo.png', date: '05/09/2025', shift: 'Manhã', salary: 1900, course: 'Análise e Desenvolvimento de Sistemas', skills: ['Python', 'Cloud', 'SQL'] },
-    { id: 4, title: 'Desenvolvedor Front-End Jr', company: 'Facebook', logo: 'https://img.icons8.com/color/48/facebook-new.png', date: '02/09/2025', shift: 'Tarde', salary: 2200, course: 'Desenvolvimento de Software Multiplataforma', skills: ['React', 'CSS', 'JavaScript'] },
-    { id: 5, title: 'Assistente de Logística', company: 'Amazon', logo: 'https://img.icons8.com/color/48/amazon.png', date: '01/09/2025', shift: 'Noite', salary: 1200, course: 'Logística', skills: ['Excel', 'SAP', 'Organização'] },
-    { id: 6, title: 'Estágio em RH', company: 'Natura', logo: 'https://img.icons8.com/color/48/rebrandly.png', date: '30/08/2025', shift: 'Manhã', salary: 1500, course: 'Gestão de Recursos Humanos', skills: ['Word', 'Comunicação'] },
-];
+// Mapa para traduzir nomes de cursos para as siglas da API
+const cursoMap = {
+    "Análise e Desenvolvimento de Sistemas": "ADS",
+    "Desenvolvimento de Software Multiplataforma": "DSM",
+    "Comércio Exterior": "COMEX",
+    "Gestão de Recursos Humanos": "RH",
+    "Gestão Empresarial": "GESTAO_EMPRESARIAL",
+    "Polímeros": "POLIMEROS",
+    "Logística": "LOGISTICA",
+    "Desenvolvimento de Produtos Plásticos": "DPP"
+};
 
-const cursosFiltro = ["Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma", "Comércio Exterior", "Gestão de Recursos Humanos", "Gestão Empresarial", "Polímeros", "Logística", "Desenvolvimento de Produtos Plásticos"];
-const habilidadesFiltro = ['Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização', 'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol', 'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript', 'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git', 'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis', 'Química', 'Processos Industriais', 'Negociação'];
+// Listas para os filtros
+const cursosFiltro = Object.keys(cursoMap);
+const habilidadesFiltro = ['Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização', 'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol', 'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript', 'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git', 'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'];
 
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
 
     const handleShare = () => {
-        const link = `${window.location.origin}/vagas#${vaga.id}`;
+        const link = `${window.location.origin}/vagas/${vaga.id}`;
         navigator.clipboard.writeText(link);
         setCopied(true);
     };
@@ -37,11 +41,10 @@ const JobCard = ({ vaga }) => {
     return (
         <div className="job-card">
             <div className="card-header">
-                <img src={vaga.logo} alt={`Logo da ${vaga.company}`} className="company-logo" />
                 <div className="card-title">
-                    <h3>{vaga.title}</h3>
-                    <p>{vaga.company}</p>
-                    <p>R$ {vaga.salary}</p>
+                    <h3>{vaga.titulo}</h3>
+                    <p>{vaga.empresa}</p>
+                    <p>{vaga.remuneracao || 'A combinar'}</p>
                 </div>
                 <div className="options-container">
                     <button className="options-btn" aria-label="Mais opções" onClick={handleShare}>
@@ -51,11 +54,11 @@ const JobCard = ({ vaga }) => {
                 </div>
             </div>
             <div className="card-body">
-                <p>{vaga.description}</p>
+                <p><strong>Responsabilidades:</strong> {vaga.responsabilidades && vaga.responsabilidades.join(', ')}</p>
             </div>
             <div className="card-footer">
-                <a href={`/vagas/${vaga.id}`} className="confirm-button">Confira</a>
-                <span>{vaga.date}</span>
+                <Link to={`/vagas/${vaga.id}`} className="confirm-button">Confira</Link>
+                <span>{vaga.dataPublicacao ? new Date(vaga.dataPublicacao).toLocaleDateString() : ''}</span>
             </div>
         </div>
     );
@@ -63,11 +66,14 @@ const JobCard = ({ vaga }) => {
 
 const Vagas = () => {
     const location = useLocation();
-
-    // Lê parâmetro da URL (ex: /vagas?curso=Logística)
     const queryParams = new URLSearchParams(location.search);
     const cursoSelecionado = queryParams.get("curso");
 
+    const [vagas, setVagas] = useState([]); // Armazena as vagas vindas da API
+    const [filteredVagas, setFilteredVagas] = useState([]); // Armazena as vagas após filtragem do cliente
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
     const [filters, setFilters] = useState({
         searchTerm: '',
         shift: { manha: false, tarde: false, noite: false },
@@ -76,12 +82,78 @@ const Vagas = () => {
         skills: []
     });
 
-    // Marca automaticamente o checkbox do curso selecionado
+    // Efeito para buscar os dados da API
     useEffect(() => {
-        if (cursoSelecionado) {
-            setFilters(prev => ({ ...prev, courses: [cursoSelecionado] }));
+        const fetchVagas = async () => {
+            setLoading(true);
+            setError(null);
+            
+            let url = `${API_URL}/vagas`; // Endpoint padrão para buscar todas as vagas
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Falha ao buscar vagas da API');
+                }
+                const data = await response.json();
+                setVagas(data); // Guarda os dados brutos da API
+            } catch (error) {
+                console.error("Erro ao buscar vagas:", error);
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVagas();
+    }, []); // Executa apenas uma vez quando o componente monta
+
+    // Efeito para aplicar os filtros sempre que 'vagas' ou 'filters' mudarem
+    useEffect(() => {
+        let vagasParaFiltrar = [...vagas];
+
+        // Filtro por busca de texto (cliente)
+        if (filters.searchTerm) {
+            vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
+                vaga.titulo.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+                vaga.empresa.toLowerCase().includes(filters.searchTerm.toLowerCase())
+            );
         }
-    }, [cursoSelecionado]);
+
+        // Filtro por curso (cliente)
+        if (filters.courses.length > 0) {
+            const cursosSiglas = filters.courses.map(fullName => cursoMap[fullName]);
+            vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
+                vaga.cursosAlvo && vaga.cursosAlvo.some(cursoApi => cursosSiglas.includes(cursoApi))
+            );
+        }
+
+        // Filtros de turno, salário e habilidades (cliente)
+        vagasParaFiltrar = vagasParaFiltrar.filter(vaga => {
+            const { shift, salaryRange, skills } = filters;
+
+            const shiftMatch = (!shift.manha && !shift.tarde && !shift.noite) ||
+                               (shift.manha && vaga.periodo && vaga.periodo.toLowerCase().includes('manhã')) ||
+                               (shift.tarde && vaga.periodo && vaga.periodo.toLowerCase().includes('tarde')) ||
+                               (shift.noite && vaga.periodo && vaga.periodo.toLowerCase().includes('noite'));
+
+            const [min, max] = salaryRange;
+            const remuneracaoNumerica = vaga.remuneracao ? parseFloat(String(vaga.remuneracao).replace(/\D/g, '')) : 0;
+            const salaryMatch = remuneracaoNumerica >= min && remuneracaoNumerica <= max;
+
+            const skillsMatch = skills.length === 0 ||
+                                skills.every(skill =>
+                                    (vaga.requisitos && vaga.requisitos.some(req => req.toLowerCase().includes(skill.toLowerCase()))) ||
+                                    (vaga.diferenciais && vaga.diferenciais.some(dif => dif.toLowerCase().includes(skill.toLowerCase())))
+                                );
+
+            return shiftMatch && salaryMatch && skillsMatch;
+        });
+
+        setFilteredVagas(vagasParaFiltrar);
+
+    }, [vagas, filters]);
+
 
     const handleSalaryChange = (newRange) => {
         setFilters(prev => ({ ...prev, salaryRange: newRange }));
@@ -93,32 +165,19 @@ const Vagas = () => {
         if (type === 'checkbox') {
             if (['manha', 'tarde', 'noite'].includes(name)) {
                 setFilters(prev => ({ ...prev, shift: { ...prev.shift, [name]: checked } }));
-            } else {
-                const filterGroup = name === 'course' ? 'courses' : 'skills';
-                const currentValues = filters[filterGroup];
-                if (checked) {
-                    setFilters(prev => ({ ...prev, [filterGroup]: [...currentValues, value] }));
-                } else {
-                    setFilters(prev => ({ ...prev, [filterGroup]: currentValues.filter(item => item !== value) }));
-                }
+            } else if (name === 'course') {
+                const currentValues = filters.courses;
+                const newCourses = checked ? [...currentValues, value] : currentValues.filter(item => item !== value);
+                setFilters(prev => ({ ...prev, courses: newCourses }));
+            } else if (name === 'skill') {
+                const currentValues = filters.skills;
+                const newSkills = checked ? [...currentValues, value] : currentValues.filter(item => item !== value);
+                setFilters(prev => ({ ...prev, skills: newSkills }));
             }
         } else {
             setFilters(prev => ({ ...prev, [name]: value }));
         }
     };
-
-    const filteredVagas = mockVagas.filter(vaga => {
-        const { searchTerm, shift, salaryRange, courses, skills } = filters;
-
-        const searchTermMatch = !searchTerm || vaga.title.toLowerCase().includes(searchTerm.toLowerCase()) || vaga.company.toLowerCase().includes(searchTerm.toLowerCase());
-        const shiftMatch = (!shift.manha && !shift.tarde && !shift.noite) || (shift.manha && vaga.shift === 'Manhã') || (shift.tarde && vaga.shift === 'Tarde') || (shift.noite && vaga.shift === 'Noite');
-        const [min, max] = salaryRange;
-        const salaryMatch = vaga.salary >= min && vaga.salary <= max;
-        const courseMatch = courses.length === 0 || courses.includes(vaga.course);
-        const skillsMatch = skills.length === 0 || skills.every(skill => vaga.skills.includes(skill));
-
-        return searchTermMatch && shiftMatch && salaryMatch && courseMatch && skillsMatch;
-    });
 
     return (
         <div className="vagas-page">
@@ -127,7 +186,6 @@ const Vagas = () => {
             </div>
 
             <div className="vagas-container">
-                {/* --- Painel de Filtros Lateral --- */}
                 <aside className="filter-sidebar">
                     <div className="filter-group">
                         <input
@@ -153,7 +211,7 @@ const Vagas = () => {
                         <h4>Faixa Salarial</h4>
                         <div className="salary-slider-labels">
                             <span>Mínimo: R$ {filters.salaryRange[0]}</span>
-                            <span>Máximo: R$ {filters.salaryRange[1]}</span>
+                            <span>Máximo: R$ {filters.salaryRange[1] === 9999 ? '9999+' : filters.salaryRange[1]}</span>
                         </div>
 
                         <ReactSlider
@@ -205,12 +263,13 @@ const Vagas = () => {
                     </div>
                 </aside>
 
-                {/* --- Lista de Vagas --- */}
                 <main className="job-listings">
-                    {filteredVagas.length > 0 ? (
+                    {loading && <p>Carregando vagas...</p>}
+                    {error && <p className="no-results">Erro ao carregar vagas: {error}</p>}
+                    {!loading && !error && filteredVagas.length > 0 ? (
                         filteredVagas.map(vaga => <JobCard key={vaga.id} vaga={vaga} />)
                     ) : (
-                        <p className="no-results">Nenhuma vaga encontrada com os filtros selecionados.</p>
+                        !loading && !error && <p className="no-results">Nenhuma vaga encontrada com os filtros selecionados.</p>
                     )}
                 </main>
             </div>

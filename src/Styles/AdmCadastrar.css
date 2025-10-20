@@ -253,3 +253,30 @@
 .form-row-single label {
     width: 100%;
 }
+
+.form-group-cursos {
+    text-align: left;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.form-group-cursos h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.cursos-checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.curso-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    color: #555;
+}

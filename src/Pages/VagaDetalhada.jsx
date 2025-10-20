@@ -1,104 +1,106 @@
-// src/Pages/VagaDetalhada.jsx
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import '../Styles/VagaDetalhada.css'; // Novo arquivo de estilo que vamos criar
+import '../Styles/VagaDetalhada.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
-
-// --- DADOS FICTÍCIOS (MOCK DATA) ---
-// No futuro, você usaria o `id` da vaga para buscar estas informações em um banco de dados.
-// Por enquanto, usaremos este exemplo fixo.
-const vagaExemplo = {
-    id: 1,
-    title: 'Estágio em Desenvolvimento Front-End',
-    empresa: 'TechSolutions LTDA',
-    periodo: 'Segunda a Sexta — 10h às 16h',
-    modelo: 'Híbrido',
-    link: 'https://www.linkedin.com/jobs/',
-    status: 'Aberta',
-    publicadaEm: '05/09/2025',
-    remuneracao: 'R$ 1.500,00 (Bolsa-auxílio)',
-    beneficios: [
-        'Vale Transporte',
-        'Vale Refeição',
-        'Day-off no aniversário',
-        'Acesso a plataforma de cursos online',
-    ],
-    requisitos: [
-        'Estar cursando Ciência da Computação, Sistemas de Informação ou áreas correlatas',
-        'Conhecimentos em HTML, CSS e JavaScript',
-        'Noções básicas de React',
-        'Boa comunicação e proatividade',
-    ],
-    diferenciais: [
-        'Conhecimento em TypeScript',
-        'Experiência com Git/GitHub',
-        'Participação em projetos de código aberto',
-        'Inglês intermediário',
-    ],
-    responsabilidades: [
-        'Auxiliar no desenvolvimento e manutenção de aplicações web',
-        'Implementar interfaces responsivas em conjunto com o time de design',
-        'Realizar testes básicos de funcionalidade',
-        'Documentar processos e melhorias no código',
-        'Participar de reuniões semanais de alinhamento',
-    ]
-};
+import API_URL from '../apiConfig';
 
 const VagaDetalhada = () => {
-    const vaga = vagaExemplo;
+    const { vagaId } = useParams();
+    const [vaga, setVaga] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchVagaDetalhada = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/vagas/${vagaId}`);
+                if (!response.ok) {
+                    throw new Error('Vaga não encontrada ou falha na requisição');
+                }
+                const data = await response.json();
+                setVaga(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVagaDetalhada();
+    }, [vagaId]);
+
+    if (loading) {
+        return <div className="vaga-detalhada-page"><p>Carregando detalhes da vaga...</p></div>;
+    }
+
+    if (error) {
+        return <div className="vaga-detalhada-page"><p className="error-message">Erro: {error}</p></div>;
+    }
+
+    if (!vaga) {
+        return <div className="vaga-detalhada-page"><p>Vaga não encontrada.</p></div>;
+    }
 
     return (
         <div className="vaga-detalhada-page">
             <div className="vaga-card-detalhado">
                 <p className="vaga-caminho">
-                    <Link to="/">Mural de Estágios</Link> &gt; <Link to="/vagas">Vagas</Link> &gt; {vaga.title}
+                    <Link to="/">Mural de Estágios</Link> &gt; <Link to="/vagas">Vagas</Link> &gt; {vaga.titulo}
                 </p>
-                <h1 className="vaga-titulo-principal">{vaga.title}</h1>
+                <h1 className="vaga-titulo-principal">{vaga.titulo}</h1>
                 <h2 className="vaga-empresa">{vaga.empresa}</h2>
 
                 <div className="vaga-info-geral">
-                    <span>Período: {vaga.periodo}</span>
-                    <span>Modelo: {vaga.modelo}</span>
-                    <span>Status: {vaga.status}</span>
+                    <span>Período: {vaga.periodo || 'Não informado'}</span>
+                    <span>Modelo: {vaga.modelo ? vaga.modelo.replace('_', ' ') : 'Não informado'}</span>
+                    <span>Status: {vaga.statusVaga || 'Não informado'}</span>
                     <span>
-                        Publicada em: {vaga.publicadaEm} <FontAwesomeIcon icon={faCalendarAlt} />
+                        Publicada em: {vaga.dataPublicacao ? new Date(vaga.dataPublicacao).toLocaleDateString() : 'Não informado'} <FontAwesomeIcon icon={faCalendarAlt} />
                     </span>
                 </div>
 
                 <div className="vaga-secao">
                     <h3>Remuneração</h3>
-                    <p>{vaga.remuneracao}</p>
-                </div>
-                
-                <div className="vaga-secao">
-                    <h3>Benefícios</h3>
-                    <ul>
-                        {vaga.beneficios.map((item, index) => <li key={index}>{item}</li>)}
-                    </ul>
-                </div>
-                
-                <div className="vaga-secao">
-                    <h3>Requisitos</h3>
-                    <ul>
-                        {vaga.requisitos.map((item, index) => <li key={index}>{item}</li>)}
-                    </ul>
-                </div>
-                
-                <div className="vaga-secao">
-                    <h3>Diferenciais</h3>
-                    <ul>
-                        {vaga.diferenciais.map((item, index) => <li key={index}>{item}</li>)}
-                    </ul>
+                    <p>{vaga.remuneracao || 'A combinar'}</p>
                 </div>
 
-                <div className="vaga-secao">
-                    <h3>Responsabilidades</h3>
-                    <ul>
-                        {vaga.responsabilidades.map((item, index) => <li key={index}>{item}</li>)}
-                    </ul>
-                </div>
+                {vaga.beneficios && vaga.beneficios.length > 0 && (
+                    <div className="vaga-secao">
+                        <h3>Benefícios</h3>
+                        <ul>
+                            {vaga.beneficios.map((item, index) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </div>
+                )}
+
+                {vaga.requisitos && vaga.requisitos.length > 0 && (
+                    <div className="vaga-secao">
+                        <h3>Requisitos</h3>
+                        <ul>
+                            {vaga.requisitos.map((item, index) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </div>
+                )}
+
+                {vaga.diferenciais && vaga.diferenciais.length > 0 && (
+                    <div className="vaga-secao">
+                        <h3>Diferenciais</h3>
+                        <ul>
+                            {vaga.diferenciais.map((item, index) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </div>
+                )}
+
+                {vaga.responsabilidades && vaga.responsabilidades.length > 0 && (
+                    <div className="vaga-secao">
+                        <h3>Responsabilidades</h3>
+                        <ul>
+                            {vaga.responsabilidades.map((item, index) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </div>
+                )}
                 
                 <a href={vaga.link} target="_blank" rel="noopener noreferrer" className="ir-para-vaga-btn">
                     IR ATÉ A VAGA
