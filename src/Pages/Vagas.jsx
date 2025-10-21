@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import ReactSlider from 'react-slider';
 import { useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css';
-import API_URL from '../apiConfig'; // Importando a URL da API
+import API_URL from '../apiConfig'; 
 
-// Mapa para traduzir nomes de cursos para as siglas da API
 const cursoMap = {
     "Análise e Desenvolvimento de Sistemas": "ADS",
     "Desenvolvimento de Software Multiplataforma": "DSM",
@@ -18,7 +16,6 @@ const cursoMap = {
     "Desenvolvimento de Produtos Plásticos": "DPP"
 };
 
-// Listas para os filtros
 const cursosFiltro = Object.keys(cursoMap);
 const habilidadesFiltro = ['Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização', 'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol', 'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript', 'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git', 'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'];
 
@@ -69,8 +66,8 @@ const Vagas = () => {
     const queryParams = new URLSearchParams(location.search);
     const cursoSelecionado = queryParams.get("curso");
 
-    const [vagas, setVagas] = useState([]); // Armazena as vagas vindas da API
-    const [filteredVagas, setFilteredVagas] = useState([]); // Armazena as vagas após filtragem do cliente
+    const [vagas, setVagas] = useState([]);
+    const [filteredVagas, setFilteredVagas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
@@ -82,13 +79,12 @@ const Vagas = () => {
         skills: []
     });
 
-    // Efeito para buscar os dados da API
     useEffect(() => {
         const fetchVagas = async () => {
             setLoading(true);
             setError(null);
             
-            let url = `${API_URL}/vagas`; // Endpoint padrão para buscar todas as vagas
+            let url = `${API_URL}/vagas`; 
 
             try {
                 const response = await fetch(url);
@@ -96,7 +92,7 @@ const Vagas = () => {
                     throw new Error('Falha ao buscar vagas da API');
                 }
                 const data = await response.json();
-                setVagas(data); // Guarda os dados brutos da API
+                setVagas(data); 
             } catch (error) {
                 console.error("Erro ao buscar vagas:", error);
                 setError(error.message);
@@ -106,13 +102,10 @@ const Vagas = () => {
         };
 
         fetchVagas();
-    }, []); // Executa apenas uma vez quando o componente monta
-
-    // Efeito para aplicar os filtros sempre que 'vagas' ou 'filters' mudarem
+    }, []);
     useEffect(() => {
         let vagasParaFiltrar = [...vagas];
 
-        // Filtro por busca de texto (cliente)
         if (filters.searchTerm) {
             vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
                 vaga.titulo.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
@@ -120,7 +113,6 @@ const Vagas = () => {
             );
         }
 
-        // Filtro por curso (cliente)
         if (filters.courses.length > 0) {
             const cursosSiglas = filters.courses.map(fullName => cursoMap[fullName]);
             vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
@@ -128,7 +120,6 @@ const Vagas = () => {
             );
         }
 
-        // Filtros de turno, salário e habilidades (cliente)
         vagasParaFiltrar = vagasParaFiltrar.filter(vaga => {
             const { shift, salaryRange, skills } = filters;
 
@@ -207,27 +198,7 @@ const Vagas = () => {
                         </div>
                     </div>
 
-                    <div className="filter-group">
-                        <h4>Faixa Salarial</h4>
-                        <div className="salary-slider-labels">
-                            <span>Mínimo: R$ {filters.salaryRange[0]}</span>
-                            <span>Máximo: R$ {filters.salaryRange[1] === 9999 ? '9999+' : filters.salaryRange[1]}</span>
-                        </div>
-
-                        <ReactSlider
-                            className="salary-range-slider"
-                            thumbClassName="slider-thumb"
-                            trackClassName="slider-track"
-                            min={500}
-                            max={9999}
-                            step={100}
-                            value={filters.salaryRange}
-                            onChange={handleSalaryChange}
-                            pearling
-                            minDistance={500}
-                        />
-                    </div>
-
+            
                     <div className="filter-group">
                         <h4>Cursos</h4>
                         <div className="checkbox-group scrollable">

@@ -116,3 +116,145 @@
         font-size: 1.1rem;
     }
 }
+/* --- Estilos para o QR Code na Tela --- */
+.qr-code-container-screen {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.qr-code-container-screen h4 {
+    margin-bottom: 15px;
+    color: var(--text-dark);
+}
+
+/* --- Estilos específicos para Impressão --- */
+@media print {
+    body {
+        background-color: #fff; /* Fundo branco para impressão */
+        font-size: 10pt; /* Tamanho de fonte menor para caber mais */
+        color: #000;
+    }
+
+    /* Esconde o header, footer e outros elementos da página principal */
+    .header-container,
+    .footer-container,
+    .no-print {
+        display: none !important; /* !important para garantir que esconda */
+    }
+
+    /* Ajusta a página de detalhes para ocupar a folha inteira */
+    .vaga-detalhada-page {
+        padding: 0;
+        margin: 0;
+    }
+
+    .vaga-card-detalhado {
+        box-shadow: none;
+        border: none;
+        padding: 20mm 15mm; /* Margens para impressão */
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    /* Mostra o cabeçalho de impressão */
+    .print-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+
+    .print-logo {
+        height: 40px; /* Ajuste o tamanho do logo conforme necessário */
+        max-width: 150px;
+    }
+
+    .print-header h2 {
+        font-size: 14pt;
+        margin: 0;
+        color: #000;
+    }
+
+    /* Ajusta títulos e textos para impressão */
+    .vaga-titulo-principal {
+        font-size: 16pt;
+        text-align: center;
+        margin-bottom: 10px;
+        color: #000;
+    }
+
+    .vaga-empresa {
+        font-size: 12pt;
+        text-align: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ccc;
+        color: #000;
+    }
+
+    .vaga-info-geral {
+        font-size: 9pt;
+        justify-content: space-around;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .vaga-secao h3 {
+        font-size: 11pt;
+        border-bottom: 1px solid #555;
+        color: #000;
+    }
+
+    .vaga-secao ul {
+        list-style-type: disc; /* Garante que os marcadores apareçam */
+        padding-left: 20px; /* Adiciona recuo à lista */
+    }
+
+    .vaga-secao li {
+        margin-bottom: 3px;
+    }
+
+    /* Mostra e formata o rodapé de impressão */
+    .print-footer {
+        display: flex; /* Alterado para flex */
+        align-items: center; /* Alinha itens verticalmente */
+        justify-content: space-between; /* Espaço entre QR Code e Texto */
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #ccc;
+        page-break-before: auto; /* Evita que o rodapé comece numa nova página sozinho */
+        font-size: 8pt;
+        color: #555;
+    }
+
+     .qr-code-container-print {
+       text-align: center;
+       margin-right: 20px; /* Espaço entre QR e texto */
+    }
+
+    .qr-code-container-print p {
+       margin-top: 5px;
+       font-size: 7pt;
+    }
+
+    .print-link {
+        word-break: break-all; /* Quebra links longos */
+        flex-grow: 1; /* Permite que o link ocupe espaço */
+        margin-right: 20px; /* Espaço antes da info da Fatec */
+    }
+     .print-info-fatec {
+       text-align: right;
+       white-space: nowrap; /* Impede que quebre a linha */
+    }
+
+    /* Garante que links não apareçam azuis e sublinhados */
+    a, a:visited {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
+}
