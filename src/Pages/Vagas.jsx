@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import '../Styles/Vagas.css';
-import API_URL from '../apiConfig'; 
+import {
+    faEllipsisV, faBuilding, faClock, faMoneyBillWave,
+    faMapMarkerAlt, faBriefcase, faShareAlt 
+} from '@fortawesome/free-solid-svg-icons';
+import '../Styles/Vagas.css'; 
+import API_URL from '../apiConfig';
 
 const cursoMap = {
     "Análise e Desenvolvimento de Sistemas": "ADS",
@@ -22,45 +25,97 @@ const habilidadesFiltro = ['Excel', 'Word', 'PowerPoint', 'Comunicação', 'Orga
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
 
-    const handleShare = () => {
+    const handleShare = (e) => {
+        e.stopPropagation(); 
         const link = `${window.location.origin}/vagas/${vaga.id}`;
-        navigator.clipboard.writeText(link);
-        setCopied(true);
+        navigator.clipboard.writeText(link)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            })
+            .catch(err => console.error('Erro ao copiar link:', err));
     };
 
-    useEffect(() => {
-        if (copied) {
-            const timer = setTimeout(() => setCopied(false), 2000);
-            return () => clearTimeout(timer);
+    const getModeloInfo = (modelo) => {
+        switch (modelo) {
+            case 'HOME_OFFICE': return { icon: faBriefcase, text: 'Home Office' };
+            case 'HIBRIDO': return { icon: faBuilding, text: 'Híbrido' };
+            case 'PRESENCIAL': return { icon: faMapMarkerAlt, text: 'Presencial' };
+            default: return { icon: faMapMarkerAlt, text: modelo || 'Não informado' };
         }
-    }, [copied]);
+    };
+    const modeloInfo = getModeloInfo(vaga.modelo);
+        const getInitials = (name) => {
+        if (!name) return '?';
+        const words = name.trim().split(/\s+/); 
+        if (words.length > 1) {
+            return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+        } else if (words.length === 1 && words[0].length > 1) {
+             return words[0].substring(0, 2).toUpperCase();
+        }
+        return name[0]?.toUpperCase() || '?';
+    };
+
 
     return (
-        <div className="job-card">
-            <div className="card-header">
-                <div className="card-title">
-                    <h3>{vaga.titulo}</h3>
-                    <p>{vaga.empresa}</p>
-                    <p>{vaga.remuneracao || 'A combinar'}</p>
+        <Link to={`/vagas/${vaga.id}`} className="job-card-link">
+            <div className="job-card">
+                <div className="card-header">
+                    <div className="company-logo-placeholder">
+                        <span>{getInitials(vaga.empresa)}</span>
+                    </div>
+                    <div className="card-title">
+                        <h3>{vaga.titulo}</h3>
+                        <p className="card-company">{vaga.empresa}</p>
+                    </div>
+                    <div className="options-container">
+                        <button className="options-btn share-btn" aria-label="Partilhar vaga" onClick={handleShare} title="Copiar link da vaga">
+                            <FontAwesomeIcon icon={faShareAlt} />
+                        </button>
+                        {copied && <span className="copy-feedback">Link Copiado!</span>}
+                    </div>
                 </div>
-                <div className="options-container">
-                    <button className="options-btn" aria-label="Mais opções" onClick={handleShare}>
-                        <FontAwesomeIcon icon={faEllipsisV} />
-                    </button>
-                    {copied && <span className="copy-feedback">Link Copiado!</span>}
+
+                <div className="job-info">
+                    <div className="info-item" title="Remuneração">
+                        <FontAwesomeIcon icon={faMoneyBillWave} />
+                        <span>{vaga.remuneracao || 'A combinar'}</span>
+                    </div>
+                    <div className="info-item" title="Modelo de Trabalho">
+                        <FontAwesomeIcon icon={modeloInfo.icon} />
+                        <span>{modeloInfo.text}</span>
+                    </div>
+                    {vaga.periodo && (
+                        <div className="info-item" title="Período/Horário">
+                            <FontAwesomeIcon icon={faClock} />
+                            <span>{vaga.periodo}</span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="card-body">
+                    {vaga.responsabilidades && vaga.responsabilidades.length > 0 && (
+                         <p>
+                            {vaga.responsabilidades.join(', ').length > 150
+                                ? `${vaga.responsabilidades.join(', ').substring(0, 150)}...`
+                                : vaga.responsabilidades.join(', ')
+                            }
+                        </p>
+                    )}
+                </div>
+
+                <div className="card-footer">
+                    <span className="card-date">
+                        Publicado em: {vaga.dataPublicacao ? new Date(vaga.dataPublicacao).toLocaleDateString('pt-BR') : 'N/D'}
+                    </span>
                 </div>
             </div>
-            <div className="card-body">
-                <p><strong>Responsabilidades:</strong> {vaga.responsabilidades && vaga.responsabilidades.join(', ')}</p>
-            </div>
-            <div className="card-footer">
-                <Link to={`/vagas/${vaga.id}`} className="confirm-button">Confira</Link>
-                <span>{vaga.dataPublicacao ? new Date(vaga.dataPublicacao).toLocaleDateString() : ''}</span>
-            </div>
-        </div>
+        </Link>
     );
 };
 
+
+// --- COMPONENTE VAGAS ---
 const Vagas = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -70,11 +125,10 @@ const Vagas = () => {
     const [filteredVagas, setFilteredVagas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     const [filters, setFilters] = useState({
         searchTerm: '',
         shift: { manha: false, tarde: false, noite: false },
-        salaryRange: [500, 9999],
         courses: cursoSelecionado ? [cursoSelecionado] : [],
         skills: []
     });
@@ -83,16 +137,12 @@ const Vagas = () => {
         const fetchVagas = async () => {
             setLoading(true);
             setError(null);
-            
             let url = `${API_URL}/vagas`; 
-
             try {
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Falha ao buscar vagas da API');
-                }
+                if (!response.ok) throw new Error('Falha ao buscar vagas da API');
                 const data = await response.json();
-                setVagas(data); 
+                setVagas(data);
             } catch (error) {
                 console.error("Erro ao buscar vagas:", error);
                 setError(error.message);
@@ -100,55 +150,54 @@ const Vagas = () => {
                 setLoading(false);
             }
         };
-
         fetchVagas();
-    }, []);
+    }, []); 
+
     useEffect(() => {
         let vagasParaFiltrar = [...vagas];
 
-        if (filters.searchTerm) {
+        if (filters.searchTerm.trim()) {
+            const termo = filters.searchTerm.toLowerCase();
             vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
-                vaga.titulo.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-                vaga.empresa.toLowerCase().includes(filters.searchTerm.toLowerCase())
+                vaga.titulo?.toLowerCase().includes(termo) ||
+                vaga.empresa?.toLowerCase().includes(termo) ||
+                vaga.requisitos?.some(r => r.toLowerCase().includes(termo)) ||
+                vaga.responsabilidades?.some(r => r.toLowerCase().includes(termo)) ||
+                vaga.diferenciais?.some(d => d.toLowerCase().includes(termo))
             );
         }
 
+        // Filtro por curso
         if (filters.courses.length > 0) {
             const cursosSiglas = filters.courses.map(fullName => cursoMap[fullName]);
             vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
-                vaga.cursosAlvo && vaga.cursosAlvo.some(cursoApi => cursosSiglas.includes(cursoApi))
+                vaga.cursosAlvo?.some(cursoApi => cursosSiglas.includes(cursoApi))
             );
         }
 
+        // Filtros adicionais (turno, skills)
         vagasParaFiltrar = vagasParaFiltrar.filter(vaga => {
-            const { shift, salaryRange, skills } = filters;
+            const { shift, skills } = filters;
 
+            // Filtro de Turno
             const shiftMatch = (!shift.manha && !shift.tarde && !shift.noite) ||
-                               (shift.manha && vaga.periodo && vaga.periodo.toLowerCase().includes('manhã')) ||
-                               (shift.tarde && vaga.periodo && vaga.periodo.toLowerCase().includes('tarde')) ||
-                               (shift.noite && vaga.periodo && vaga.periodo.toLowerCase().includes('noite'));
+                               (shift.manha && vaga.periodo?.toLowerCase().includes('manhã')) ||
+                               (shift.tarde && vaga.periodo?.toLowerCase().includes('tarde')) ||
+                               (shift.noite && vaga.periodo?.toLowerCase().includes('noite'));
 
-            const [min, max] = salaryRange;
-            const remuneracaoNumerica = vaga.remuneracao ? parseFloat(String(vaga.remuneracao).replace(/\D/g, '')) : 0;
-            const salaryMatch = remuneracaoNumerica >= min && remuneracaoNumerica <= max;
-
+             // Filtro de Habilidades
             const skillsMatch = skills.length === 0 ||
                                 skills.every(skill =>
-                                    (vaga.requisitos && vaga.requisitos.some(req => req.toLowerCase().includes(skill.toLowerCase()))) ||
-                                    (vaga.diferenciais && vaga.diferenciais.some(dif => dif.toLowerCase().includes(skill.toLowerCase())))
+                                    vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
+                                    vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
                                 );
 
-            return shiftMatch && salaryMatch && skillsMatch;
+            return shiftMatch && skillsMatch;
         });
 
         setFilteredVagas(vagasParaFiltrar);
 
-    }, [vagas, filters]);
-
-
-    const handleSalaryChange = (newRange) => {
-        setFilters(prev => ({ ...prev, salaryRange: newRange }));
-    };
+    }, [vagas, filters]); 
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -165,7 +214,7 @@ const Vagas = () => {
                 const newSkills = checked ? [...currentValues, value] : currentValues.filter(item => item !== value);
                 setFilters(prev => ({ ...prev, skills: newSkills }));
             }
-        } else {
+        } else { 
             setFilters(prev => ({ ...prev, [name]: value }));
         }
     };
@@ -173,16 +222,18 @@ const Vagas = () => {
     return (
         <div className="vagas-page">
             <div className="vagas-header">
-                <h1>Vagas de Estágio</h1>
+                <h1>Encontre sua vaga de estágio</h1>
+                <p>Explore as oportunidades disponíveis para alunos da Fatec Zona Leste.</p>
             </div>
 
             <div className="vagas-container">
+                {/* --- Sidebar de Filtros --- */}
                 <aside className="filter-sidebar">
                     <div className="filter-group">
                         <input
                             type="text"
                             name="searchTerm"
-                            placeholder="Busque por cargo ou empresa..."
+                            placeholder="Buscar por cargo, empresa ou skill..."
                             className="search-input"
                             value={filters.searchTerm}
                             onChange={handleInputChange}
@@ -198,19 +249,12 @@ const Vagas = () => {
                         </div>
                     </div>
 
-            
                     <div className="filter-group">
                         <h4>Cursos</h4>
                         <div className="checkbox-group scrollable">
                             {cursosFiltro.map(curso => (
                                 <label key={curso}>
-                                    <input
-                                        type="checkbox"
-                                        name="course"
-                                        value={curso}
-                                        checked={filters.courses.includes(curso)}
-                                        onChange={handleInputChange}
-                                    /> {curso}
+                                    <input type="checkbox" name="course" value={curso} checked={filters.courses.includes(curso)} onChange={handleInputChange}/> {curso}
                                 </label>
                             ))}
                         </div>
@@ -221,22 +265,17 @@ const Vagas = () => {
                         <div className="checkbox-group scrollable">
                             {habilidadesFiltro.map(skill => (
                                 <label key={skill}>
-                                    <input
-                                        type="checkbox"
-                                        name="skill"
-                                        value={skill}
-                                        checked={filters.skills.includes(skill)}
-                                        onChange={handleInputChange}
-                                    /> {skill}
+                                    <input type="checkbox" name="skill" value={skill} checked={filters.skills.includes(skill)} onChange={handleInputChange}/> {skill}
                                 </label>
                             ))}
                         </div>
                     </div>
                 </aside>
 
+                {/* --- Lista de Vagas --- */}
                 <main className="job-listings">
-                    {loading && <p>Carregando vagas...</p>}
-                    {error && <p className="no-results">Erro ao carregar vagas: {error}</p>}
+                    {loading && <p className="loading-message">A carregar vagas...</p>}
+                    {error && <p className="no-results error-message">Erro ao carregar vagas: {error}</p>}
                     {!loading && !error && filteredVagas.length > 0 ? (
                         filteredVagas.map(vaga => <JobCard key={vaga.id} vaga={vaga} />)
                     ) : (

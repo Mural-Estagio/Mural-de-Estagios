@@ -1,252 +1,354 @@
 .vaga-detalhada-page {
-    padding: 40px 20px;
-    background-color: #f0f2f5; 
+    padding: 30px 20px 50px 20px; 
+    background-color: var(--background-page);
+    min-height: 80vh;
 }
 
 .vaga-card-detalhado {
-    max-width: 900px;
-    margin: 0 auto;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    max-width: 850px; 
+    margin: 0 auto 40px auto; 
+    background: var(--background-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px; 
+    padding: 35px 45px 45px 45px; 
+    box-shadow: var(--shadow-md); 
 }
 
-.vaga-caminho {
+/* Link "Voltar" */
+.back-link {
+    display: inline-flex; 
+    align-items: center;
+    gap: 8px;
     font-size: 0.9rem;
-    color: #888;
-    margin-bottom: 20px;
-}
-
-.vaga-caminho a {
-    color: var(--primary-color);
+    color: var(--text-medium);
+    margin-bottom: 25px;
     text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
 }
-
-.vaga-caminho a:hover {
+.back-link:hover {
+    color: var(--primary-color);
     text-decoration: underline;
 }
+.back-link svg {
+    font-size: 0.8em;
+}
 
+
+/* --- Cabeçalho Principal da Vaga --- */
+.card-header-info {
+    position: relative; 
+    background-color: #fff; 
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 20px; 
+    margin-bottom: 35px; 
+}
 .vaga-titulo-principal {
     font-family: 'Poppins', sans-serif;
-    font-size: 2.2rem;
+    font-size: 1.8rem; 
+    font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
+    line-height: 1.3;
 }
-
 .vaga-empresa {
-    font-size: 1.3rem;
-    color: #555;
-    font-weight: normal;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 20px;
+    font-size: 1.1rem; 
+    color: var(--text-medium);
+    font-weight: 500; 
+    margin-bottom: 20px;
 }
-
 .vaga-info-geral {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 30px;
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 30px;
+    gap: 12px 25px; 
+    color: var(--text-medium);
+    font-size: 0.9rem; 
+    padding-top: 15px;
+    border-top: none; 
 }
-
 .vaga-info-geral span {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px; 
+    font-weight: 400; 
 }
-
-.vaga-secao {
-    margin-bottom: 30px;
+.vaga-info-geral span svg {
+    color: #888; 
+    font-size: 0.9rem; 
+    width: 15px; 
+    text-align: center;
+    opacity: 0.9;
 }
-
-.vaga-secao h3 {
-    font-size: 1.2rem;
-    color: var(--text-dark);
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    display: inline-block;
-}
-
-.vaga-secao p, .vaga-secao ul {
-    color: #555;
-    line-height: 1.7;
-}
-
-.vaga-secao ul {
-    list-style-position: inside;
-    padding-left: 0;
-}
-
-.ir-para-vaga-btn {
-    display: block;
-    width: 100%;
+.apply-button-header {
+    position: absolute;
+    top: -5px; 
+    right: 0;
     background-color: var(--primary-color);
     color: white;
-    text-align: center;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 10px 18px; 
+    border-radius: 6px; 
     text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-top: 40px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 600;
+    font-size: 0.9rem; 
+    display: inline-flex; 
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease-out;
+    border: none;
+    cursor: pointer;
+}
+.apply-button-header:hover {
+    background-color: var(--primary-color-dark);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+.apply-button-header svg { font-size: 0.85em; }
+
+/* --- Secções de Detalhes --- */
+.vaga-secao { margin-bottom: 25px; } 
+.vaga-secao h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem; 
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 12px; 
+    padding-bottom: 6px; 
+    border-bottom: 1px solid #ddd; 
+    display: flex; 
+    align-items: center;
+    gap: 10px;
+}
+.vaga-secao h3 svg {
+    color: var(--primary-color);
+    font-size: 1rem; 
+    opacity: 0.8;
+}
+.vaga-secao p, .vaga-secao ul {
+    color: var(--text-medium);
+    line-height: 1.65; 
+    font-size: 0.95rem; 
+}
+.vaga-secao ul {
+    list-style-position: outside;
+    padding-left: 20px;
+}
+.vaga-secao ul li { margin-bottom: 6px; } 
+
+/* --- Botões de Ação na Tela --- */
+.vaga-actions {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid var(--border-light);
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 15px; 
 }
 
-.ir-para-vaga-btn:hover {
-    background-color: #a30000;
-    transform: translateY(-2px);
+.ir-para-vaga-btn { 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto; 
+    text-align: center;
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-out;
+    flex-grow: 1; 
+    max-width: calc(50% - 10px); 
+    min-width: 180px; 
+}
+
+.ir-para-vaga-btn.secondary { 
+    background-color: #e9ecef;
+    color: var(--text-dark);
+    border-color: #ced4da;
+    cursor: pointer;
+}
+.ir-para-vaga-btn.secondary:hover {
+    background-color: #dde1e5;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* QR Code na Tela - Garante que ocupe a linha inteira abaixo dos botões */
+.qr-code-container-screen {
+    width: 100%; /* Ocupa a largura toda */
+    margin-top: 15px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+    /* order: 3; /* Garante que fique depois dos botões no flex container (opcional) */
+}
+.qr-code-container-screen h4 {
+    margin-bottom: 12px;
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+.qr-code-container-screen canvas {
+    border: 1px solid var(--border-light);
+    padding: 5px;
+    border-radius: 4px;
+    background-color: white;
+}
+
+@media (max-width: 600px) {
+    .vaga-actions {
+        flex-direction: column; 
+        align-items: stretch; 
+    }
+    .ir-para-vaga-btn {
+        max-width: 100%; 
+    }
+}
+/* QR Code na Tela */
+.qr-code-container-screen {
+    width: 100%;
+    margin-top: 10px; 
+    padding-top: 20px;
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+}
+.qr-code-container-screen h4 {
+    margin-bottom: 12px;
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.9rem; 
+}
+.qr-code-container-screen canvas { 
+    border: 1px solid var(--border-light);
+    padding: 5px;
+    border-radius: 4px;
+    background-color: white; 
+}
+
+
+/* Mensagens de Status */
+.loading-message, .error-message, .no-results {
+    color: var(--text-medium);
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 40px;
+    background-color: var(--background-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin: 40px auto;
+    max-width: 850px;
+}
+.error-message {
+    color: #b91c1c; 
+    background-color: #fef2f2; 
 }
 
 /* Responsividade */
+@media (max-width: 768px) {
+    .vaga-card-detalhado { padding: 25px 30px 30px 30px; } 
+    .apply-button-header { font-size: 0.85rem; padding: 8px 15px; }
+}
 @media (max-width: 600px) {
-    .vaga-card-detalhado {
-        padding: 20px;
+    .vaga-card-detalhado { padding: 20px; } 
+    .apply-button-header {
+        position: static; 
+        margin-top: 20px;
+        margin-bottom: -10px; 
+        width: 100%;
+        justify-content: center;
     }
-    .vaga-titulo-principal {
-        font-size: 1.8rem;
-    }
-    .vaga-empresa {
-        font-size: 1.1rem;
-    }
-}
-/* --- Estilos para o QR Code na Tela --- */
-.qr-code-container-screen {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-    text-align: center;
-}
-
-.qr-code-container-screen h4 {
-    margin-bottom: 15px;
-    color: var(--text-dark);
-}
-
-/* --- Estilos específicos para Impressão --- */
-@media print {
-    body {
-        background-color: #fff; 
-        font-size: 10pt; 
-        color: #000;
-    }
-
-   .header-container,
-    .footer-container,
-    .no-print {
-        display: none !important; 
-    }
-
-    .vaga-detalhada-page {
-        padding: 0;
-        margin: 0;
-    }
-
-    .vaga-card-detalhado {
-        box-shadow: none;
-        border: none;
-        padding: 20mm 15mm; 
-        max-width: 100%;
-        margin: 0;
-        border-radius: 0;
-    }
-
-   .print-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
-    }
-
-    .print-logo {
-        height: 40px; 
-        max-width: 150px;
-    }
-
-    .print-header h2 {
-        font-size: 14pt;
-        margin: 0;
-        color: #000;
-    }
-
-    .vaga-titulo-principal {
-        font-size: 16pt;
-        text-align: center;
-        margin-bottom: 10px;
-        color: #000;
-    }
-
-    .vaga-empresa {
-        font-size: 12pt;
-        text-align: center;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #ccc;
-        color: #000;
-    }
-
+    .card-header-info { padding-bottom: 15px; }
+    .vaga-titulo-principal { font-size: 1.6rem; }
+    .vaga-empresa { font-size: 1rem; }
     .vaga-info-geral {
-        font-size: 9pt;
-        justify-content: space-around;
-        margin-bottom: 15px;
-        color: #333;
+        flex-direction: column; 
+        gap: 8px; 
+        align-items: flex-start;
+    }
+    .vaga-secao h3 { font-size: 1.1rem; }
+    .vaga-secao p, .vaga-secao ul { font-size: 0.9rem; }
+}
+
+.print-only { display: none; }
+
+@media print {
+    @page {
+      size: A4;
+      margin: 15mm; 
+    }
+    html, body {
+        background-color: #fff !important; 
+        font-size: 9.5pt; color: #000;
+        font-family: Arial, sans-serif; line-height: 1.35;
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+    }
+    .header-container, .footer-container, .no-print {
+        display: none !important;
     }
 
+    .vaga-detalhada-page { padding: 0; margin: 0; background-color: #fff !important; }
+    .vaga-card-detalhado {
+        box-shadow: none !important; border: none !important; padding: 0 !important;
+        max-width: 100% !important; margin: 0 !important; border-radius: 0 !important;
+        background-color: #fff !important;
+    }
+
+    /* Cabeçalho de Impressão */
+    .print-header.print-only {
+        display: flex !important; align-items: center; justify-content: space-between;
+        margin-bottom: 8mm; border-bottom: 1.5px solid #000; padding-bottom: 4mm;
+    }
+    .print-logo { height: auto; max-width: 120px; display: block; }
+    .print-header h2 { font-size: 11pt; margin: 0; color: #000; font-family: 'Poppins', sans-serif; font-weight: 600; text-align: right; }
+
+    /* Info Principal na Impressão */
+    .card-header-info { padding: 0 !important; border: none !important; background-color: #fff !important; margin-bottom: 6mm !important; }
+    .vaga-titulo-principal { font-size: 14pt !important; text-align: left !important; margin-bottom: 0.5mm !important; color: #000 !important; font-family: 'Poppins', sans-serif !important; }
+    .vaga-empresa { font-size: 10pt !important; text-align: left !important; margin-bottom: 3mm !important; padding-bottom: 0 !important; border-bottom: none !important; color: #000 !important; font-weight: bold !important; }
+    .vaga-info-geral {
+        font-size: 8.5pt !important; flex-direction: row !important; flex-wrap: wrap !important;
+        gap: 1.5mm 5mm !important; margin-bottom: 0 !important; color: #000 !important; padding-top: 2.5mm !important;
+        border-top: 1px dotted #aaa !important;
+    }
+    .vaga-info-geral span svg { display: none !important; }
+
+    /* Secções na Impressão */
+    .vaga-secao { margin-bottom: 5mm !important; page-break-inside: avoid !important; }
     .vaga-secao h3 {
-        font-size: 11pt;
-        border-bottom: 1px solid #555;
-        color: #000;
+        font-size: 10pt !important; font-family: 'Poppins', sans-serif !important; font-weight: 600 !important;
+        border-bottom: 1px solid #555 !important; color: #000 !important; padding-bottom: 1mm !important;
+        margin-bottom: 2.5mm !important; display: block !important;
     }
+    .vaga-secao h3 svg { display: none !important; }
+    .vaga-secao ul { list-style-type: disc !important; padding-left: 5mm !important; margin: 0 !important; }
+    .vaga-secao li { margin-bottom: 1mm !important; }
+    .vaga-secao p { line-height: 1.3 !important; margin: 0 !important; }
 
-    .vaga-secao ul {
-        list-style-type: disc; 
-        padding-left: 20px; 
-    }
+    /* Secção Cursos Alvo na Impressão */
+    .vaga-secao.print-only { display: block !important; }
+    .vaga-secao.print-only p { font-style: normal !important; font-size: 8.5pt !important; }
 
-    .vaga-secao li {
-        margin-bottom: 3px;
+    /* Rodapé de Impressão */
+    .print-footer.print-only {
+        display: flex !important; align-items: flex-end !important; justify-content: space-between !important;
+        margin-top: 10mm !important; padding-top: 3mm !important; border-top: 1px solid #ccc !important;
+        page-break-before: auto !important; font-size: 7.5pt !important; color: #333 !important;
     }
+     .qr-code-container-print { text-align: center !important; margin-right: 6mm !important; flex-shrink: 0 !important;}
+     .qr-code-container-print canvas { max-width: 60px !important; height: auto !important; display: block !important; margin: 0 auto !important; }
+     .qr-code-container-print p { margin-top: 0.5mm !important; font-size: 6.5pt !important; }
+     .print-link {
+        word-break: break-all !important; flex-grow: 1 !important; margin-right: 6mm !important; font-size: 7pt !important; line-height: 1.2 !important;
+        text-align: left !important;
+    }
+     .print-info-fatec { text-align: right !important; white-space: nowrap !important; font-weight: bold !important; font-size: 7.5pt !important;}
 
-    .print-footer {
-        display: flex; 
-        align-items: center;
-        justify-content: space-between; 
-        margin-top: 25px;
-        padding-top: 15px;
-        border-top: 1px solid #ccc;
-        page-break-before: auto; 
-        font-size: 8pt;
-        color: #555;
-    }
-
-     .qr-code-container-print {
-       text-align: center;
-       margin-right: 20px; 
-    }
-
-    .qr-code-container-print p {
-       margin-top: 5px;
-       font-size: 7pt;
-    }
-
-    .print-link {
-        word-break: break-all; 
-        flex-grow: 1; 
-        margin-right: 20px; 
-    }
-     .print-info-fatec {
-       text-align: right;
-       white-space: nowrap; 
-    }
-
-    a, a:visited {
-        color: #000 !important;
-        text-decoration: none !important;
-    }
+    /* Remove cor e sublinhado de links */
+    a, a:visited { color: #000 !important; text-decoration: none !important; }
 }
