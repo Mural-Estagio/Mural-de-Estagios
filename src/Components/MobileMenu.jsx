@@ -8,7 +8,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
  * Menu lateral que aparece em telas menores, contendo os links de navegação.
  * Controlado pelo estado `isOpen` no componente App.
  */
-const MobileMenu = ({ isOpen, toggleMenu, cursos, documentos }) => {
+const MobileMenu = ({ isOpen, toggleMenu, documentos }) => {
     return (
         <div className={`mobile-menu ${isOpen ? 'is-open' : ''}`}>
             <button className="close-btn" onClick={toggleMenu} aria-label="Fechar menu">
@@ -18,23 +18,11 @@ const MobileMenu = ({ isOpen, toggleMenu, cursos, documentos }) => {
             <div className="mobile-links">
                 <a href="/" className="nav-link" onClick={toggleMenu}>Mural de Estágios</a>
                 <a href="/vagas" className="nav-link" onClick={toggleMenu}>Vagas</a>
-                
-                {/* Dropdown de Cursos para Mobile */}
-                <div className="mobile-dropdown">
-                    <span className="nav-link mobile-dropdown-toggle">Cursos <span className="arrow-down">▼</span></span>
-                    <div className="mobile-dropdown-content">
-                        {cursos.map(curso => (
-                            <a key={curso} href="#" onClick={toggleMenu}>{curso}</a>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Dropdown de Documentos para Mobile */}
                 <div className="mobile-dropdown">
                     <span className="nav-link mobile-dropdown-toggle">Documentos <span className="arrow-down">▼</span></span>
                     <div className="mobile-dropdown-content">
                         {documentos.map(doc => (
-                            <a key={doc} href="#" onClick={toggleMenu}>{doc}</a>
+                            <a key={doc} href={doc === "Estágio Obrigatório" ? "/documentos-obrigatorios" : "/documentos-nao-obrigatorios"} onClick={toggleMenu}>{doc}</a>
                         ))}
                     </div>
                 </div>

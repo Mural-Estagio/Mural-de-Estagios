@@ -4,7 +4,7 @@ import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/AdmCadastrar.css';
 import API_URL from '../apiConfig';
 
-// O mapa de cursos também é útil aqui
+
 const cursoMap = {
     "Análise e Desenvolvimento de Sistemas": "ADS",
     "Desenvolvimento de Software Multiplataforma": "DSM",
@@ -40,7 +40,7 @@ const FormularioVaga = ({ onClose }) => {
         link: '',
         beneficios: '',
         requisitos: '',
-        modelo: 'PRESENCIAL', // Valor padrão para o select
+        modelo: 'PRESENCIAL', 
         diferenciais: '',
         responsabilidades: '',
         dataPublicacao: new Date().toISOString().split('T')[0],

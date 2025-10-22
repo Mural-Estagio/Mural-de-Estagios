@@ -53,7 +53,7 @@
 
 .social-icons a:hover {
     color: var(--hover-color);
-    transform: translateY(-3px); /* Efeito flutuante */
+    transform: translateY(-3px); 
 }
 
 .fatec-logos {
@@ -69,7 +69,7 @@
 }
 
 .fatec-logos .logo:hover {
-    transform: scale(1.05); /* Efeito de zoom sutil */
+    transform: scale(1.05); 
 }
 
 /* --- Seção de Detalhes: Contato e Endereço --- */
@@ -100,20 +100,19 @@
 }
 
 /* --- Seção Inferior: Copyright --- */
-/* ATUALIZE ESTA CLASSE */
 .footer-bottom {
-    display: flex; /* Adicionado para alinhar os itens */
-    justify-content: space-between; /* Coloca um item em cada ponta */
-    align-items: center; /* Alinha verticalmente */
-    flex-wrap: wrap; /* Permite que os itens quebrem a linha em telas pequenas */
-    gap: 15px; /* Adiciona um espaço caso quebrem a linha */
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 15px; 
     padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 12px;
     margin-top: 10px;
 }
 
-/* ADICIONE ESTA NOVA CLASSE PARA O BOTÃO */
+
 .admin-login-link {
     color: var(--text-light);
     background-color: transparent;

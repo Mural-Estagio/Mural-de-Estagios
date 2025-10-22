@@ -9,7 +9,7 @@ import LoginPage from "./Pages/Login.jsx";
 import Documentos from "./Pages/Documentos.jsx";
 import DocumentosObrigatorios from "./Pages/DocumentosObrigatorios.jsx";
 import DocumentosNaoObrigatorios from "./Pages/DocumentosNaoObrigatorios.jsx";
-import VagaDetalhada from "./Pages/VagaDetalhada.jsx"; // 1. Importe a nova página
+import VagaDetalhada from "./Pages/VagaDetalhada.jsx"; 
 import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
 import "./Styles/global.css";
@@ -31,7 +31,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/vagas" element={<Vagas />} />
-          <Route path="/vagas/:vagaId" element={<VagaDetalhada />} /> {/* 2. Adicione a rota dinâmica */}
+          <Route path="/vagas/:vagaId" element={<VagaDetalhada />} /> 
           <Route path="/curriculo" element={<Curriculo />} />
           <Route path="/admin/cadastrar" element={<AdmCadastrar />} />
           <Route path="/admin/Login" element={<LoginPage />} />

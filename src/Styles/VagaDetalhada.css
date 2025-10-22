@@ -1,8 +1,6 @@
-/* src/Styles/VagaDetalhada.css */
-
 .vaga-detalhada-page {
     padding: 40px 20px;
-    background-color: #f0f2f5; /* Fundo cinza claro */
+    background-color: #f0f2f5; 
 }
 
 .vaga-card-detalhado {
@@ -132,19 +130,17 @@
 /* --- Estilos específicos para Impressão --- */
 @media print {
     body {
-        background-color: #fff; /* Fundo branco para impressão */
-        font-size: 10pt; /* Tamanho de fonte menor para caber mais */
+        background-color: #fff; 
+        font-size: 10pt; 
         color: #000;
     }
 
-    /* Esconde o header, footer e outros elementos da página principal */
-    .header-container,
+   .header-container,
     .footer-container,
     .no-print {
-        display: none !important; /* !important para garantir que esconda */
+        display: none !important; 
     }
 
-    /* Ajusta a página de detalhes para ocupar a folha inteira */
     .vaga-detalhada-page {
         padding: 0;
         margin: 0;
@@ -153,14 +149,13 @@
     .vaga-card-detalhado {
         box-shadow: none;
         border: none;
-        padding: 20mm 15mm; /* Margens para impressão */
+        padding: 20mm 15mm; 
         max-width: 100%;
         margin: 0;
         border-radius: 0;
     }
 
-    /* Mostra o cabeçalho de impressão */
-    .print-header {
+   .print-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -170,7 +165,7 @@
     }
 
     .print-logo {
-        height: 40px; /* Ajuste o tamanho do logo conforme necessário */
+        height: 40px; 
         max-width: 150px;
     }
 
@@ -180,7 +175,6 @@
         color: #000;
     }
 
-    /* Ajusta títulos e textos para impressão */
     .vaga-titulo-principal {
         font-size: 16pt;
         text-align: center;
@@ -211,30 +205,29 @@
     }
 
     .vaga-secao ul {
-        list-style-type: disc; /* Garante que os marcadores apareçam */
-        padding-left: 20px; /* Adiciona recuo à lista */
+        list-style-type: disc; 
+        padding-left: 20px; 
     }
 
     .vaga-secao li {
         margin-bottom: 3px;
     }
 
-    /* Mostra e formata o rodapé de impressão */
     .print-footer {
-        display: flex; /* Alterado para flex */
-        align-items: center; /* Alinha itens verticalmente */
-        justify-content: space-between; /* Espaço entre QR Code e Texto */
+        display: flex; 
+        align-items: center;
+        justify-content: space-between; 
         margin-top: 25px;
         padding-top: 15px;
         border-top: 1px solid #ccc;
-        page-break-before: auto; /* Evita que o rodapé comece numa nova página sozinho */
+        page-break-before: auto; 
         font-size: 8pt;
         color: #555;
     }
 
      .qr-code-container-print {
        text-align: center;
-       margin-right: 20px; /* Espaço entre QR e texto */
+       margin-right: 20px; 
     }
 
     .qr-code-container-print p {
@@ -243,16 +236,15 @@
     }
 
     .print-link {
-        word-break: break-all; /* Quebra links longos */
-        flex-grow: 1; /* Permite que o link ocupe espaço */
-        margin-right: 20px; /* Espaço antes da info da Fatec */
+        word-break: break-all; 
+        flex-grow: 1; 
+        margin-right: 20px; 
     }
      .print-info-fatec {
        text-align: right;
-       white-space: nowrap; /* Impede que quebre a linha */
+       white-space: nowrap; 
     }
 
-    /* Garante que links não apareçam azuis e sublinhados */
     a, a:visited {
         color: #000 !important;
         text-decoration: none !important;

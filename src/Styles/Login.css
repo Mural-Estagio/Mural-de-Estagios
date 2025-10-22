@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 70vh; /* Usa a altura da viewport para centralizar verticalmente */
+    min-height: 70vh; 
     padding: 40px 20px;
     background-color: #f0f2f5;
 }
