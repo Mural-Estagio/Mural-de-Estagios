@@ -7,7 +7,7 @@ import {
     faClock, faMapMarkerAlt, faBriefcase, faBuilding, faListCheck,
     faStar, faAward, faUsers, faExternalLinkAlt, faArrowLeft 
 } from '@fortawesome/free-solid-svg-icons';
-import API_URL from '../apiConfig';
+import { api } from '../Service/api';
 import { QRCodeCanvas } from 'qrcode.react';
 
 const cursoMap = {
@@ -30,20 +30,23 @@ const VagaDetalhada = () => {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-          setCurrentUrl(window.location.href);
+            setCurrentUrl(window.location.href);
         }
 
         const fetchVagaDetalhada = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL}/vagas/${vagaId}`);
-                if (!response.ok) {
-                    throw new Error('Vaga não encontrada ou falha na requisição');
+                // Faz a requisição usando axios
+                const response = await api.get(`/vagas/${vagaId}`);
+
+                if (!response.data) {
+                    throw new Error('Vaga não encontrada ou sem dados disponíveis');
                 }
-                const data = await response.json();
-                setVaga(data);
+
+                setVaga(response.data);
             } catch (err) {
-                setError(err.message);
+                console.error('Erro ao buscar vaga:', err);
+                setError(err.response?.data?.message || err.message || 'Erro inesperado');
             } finally {
                 setLoading(false);
             }
@@ -68,15 +71,27 @@ const VagaDetalhada = () => {
     };
 
     if (loading) {
-        return <div className="vaga-detalhada-page"><p className="loading-message">Carregando detalhes da vaga...</p></div>;
+        return (
+            <div className="vaga-detalhada-page">
+                <p className="loading-message">Carregando detalhes da vaga...</p>
+            </div>
+        );
     }
 
     if (error) {
-        return <div className="vaga-detalhada-page"><p className="error-message">Erro: {error}</p></div>;
+        return (
+            <div className="vaga-detalhada-page">
+                <p className="error-message">Erro: {error}</p>
+            </div>
+        );
     }
 
     if (!vaga) {
-        return <div className="vaga-detalhada-page"><p className="no-results">Vaga não encontrada.</p></div>;
+        return (
+            <div className="vaga-detalhada-page">
+                <p className="no-results">Vaga não encontrada.</p>
+            </div>
+        );
     }
 
     const modeloInfo = getModeloInfo(vaga.modelo);
@@ -84,13 +99,14 @@ const VagaDetalhada = () => {
     return (
         <div className="vaga-detalhada-page">
             <div id="vaga-para-imprimir" className="vaga-card-detalhado">
-                    <div className="print-header print-only">
+                <div className="print-header print-only">
                     <img src="/fatec_logo.png" alt="Logo Fatec Zona Leste" className="print-logo" />
                     <h2>Mural de Estágios - Detalhes da Vaga</h2>
                 </div>
+
                 <Link to="/vagas" className="back-link no-print">
                     <FontAwesomeIcon icon={faArrowLeft} /> Voltar para Vagas
-                 </Link>
+                </Link>
 
                 {/* --- CABEÇALHO PRINCIPAL DA VAGA --- */}
                 <div className="card-header-info">
@@ -113,65 +129,65 @@ const VagaDetalhada = () => {
                         </span>
                     </div>
                     {/* Botão de Candidatura no Cabeçalho */}
-                     <a href={vaga.link} target="_blank" rel="noopener noreferrer" className="apply-button-header no-print">
+                    <a href={vaga.link} target="_blank" rel="noopener noreferrer" className="apply-button-header no-print">
                         Candidatar-se <FontAwesomeIcon icon={faExternalLinkAlt} />
-                     </a>
+                    </a>
                 </div>
 
-                {/* --- Secções de Detalhes com Ícones --- */}
-                {vaga.responsabilidades && vaga.responsabilidades.length > 0 && (
+                {/* --- Seções de Detalhes --- */}
+                {vaga.responsabilidades?.length > 0 && (
                     <div className="vaga-secao">
                         <h3><FontAwesomeIcon icon={faListCheck} /> Responsabilidades</h3>
                         <ul>{vaga.responsabilidades.map((item, index) => <li key={index}>{item}</li>)}</ul>
                     </div>
                 )}
-                 {vaga.requisitos && vaga.requisitos.length > 0 && (
+                {vaga.requisitos?.length > 0 && (
                     <div className="vaga-secao">
                         <h3><FontAwesomeIcon icon={faStar} /> Requisitos</h3>
                         <ul>{vaga.requisitos.map((item, index) => <li key={index}>{item}</li>)}</ul>
                     </div>
                 )}
-                 {vaga.beneficios && vaga.beneficios.length > 0 && (
+                {vaga.beneficios?.length > 0 && (
                     <div className="vaga-secao">
                         <h3><FontAwesomeIcon icon={faAward} /> Benefícios</h3>
                         <ul>{vaga.beneficios.map((item, index) => <li key={index}>{item}</li>)}</ul>
                     </div>
                 )}
-                 {vaga.diferenciais && vaga.diferenciais.length > 0 && (
+                {vaga.diferenciais?.length > 0 && (
                     <div className="vaga-secao">
                         <h3><FontAwesomeIcon icon={faUsers} /> Diferenciais</h3>
                         <ul>{vaga.diferenciais.map((item, index) => <li key={index}>{item}</li>)}</ul>
                     </div>
                 )}
-                {/* --- Cursos Alvo  --- */}
-                 {vaga.cursosAlvo && vaga.cursosAlvo.length > 0 && (
-                    <div className="vaga-secao print-only"> 
+
+                {/* --- Cursos Alvo --- */}
+                {vaga.cursosAlvo?.length > 0 && (
+                    <div className="vaga-secao print-only">
                         <h3>Cursos Alvo</h3>
-                        <p>{vaga.cursosAlvo.map(sigla => {
-                             const nomeCompleto = Object.keys(cursoMap).find(key => cursoMap[key] === sigla);
-                             return nomeCompleto || sigla;
-                        }).join(', ')}</p>
+                        <p>
+                            {vaga.cursosAlvo.map(sigla => cursoMap[sigla] || sigla).join(', ')}
+                        </p>
                     </div>
                 )}
 
-                {/* --- Rodapé para Impressão  --- */}
+                {/* --- Rodapé para Impressão --- */}
                 <div className="print-footer print-only">
                     <div className="qr-code-container-print">
-                        {currentUrl && <QRCodeCanvas value={currentUrl} size={70} level="M" />} 
+                        {currentUrl && <QRCodeCanvas value={currentUrl} size={70} level="M" />}
                         <p>Acesse online</p>
                     </div>
-                     <p className="print-link"><b>Link:</b> {currentUrl}</p>
-                     <p className="print-info-fatec">Mural de Estágios - Fatec Zona Leste</p>
+                    <p className="print-link"><b>Link:</b> {currentUrl}</p>
+                    <p className="print-info-fatec">Mural de Estágios - Fatec Zona Leste</p>
                 </div>
 
-                {/* --- Botões de Ação na Tela --- */}
+                {/* --- Botões de Ação --- */}
                 <div className="vaga-actions no-print">
                     <button onClick={handlePrint} className="ir-para-vaga-btn secondary">
                         <FontAwesomeIcon icon={faPrint} /> Imprimir / Salvar PDF
                     </button>
                     <div className="qr-code-container-screen">
                         <h4>Compartilhe esta vaga (QR Code):</h4>
-                         {currentUrl && <QRCodeCanvas value={currentUrl} size={110} level="M" />} 
+                        {currentUrl && <QRCodeCanvas value={currentUrl} size={110} level="M" />}
                     </div>
                 </div>
             </div>

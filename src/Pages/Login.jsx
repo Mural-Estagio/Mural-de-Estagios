@@ -4,6 +4,7 @@ import '../Styles/Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import logoFatec from '../Assets/fatec_logo.png';
+import { api } from '../Service/api';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -11,14 +12,27 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Simulação de login
-    const handleLogin = (e) => {
-        e.preventDefault(); 
-        if (username === 'admin' && password === 'admin123') {
-            setError('');
-            navigate('/admin/cadastrar');
-        } else {
-            setError('Usuário ou senha inválidos.');
+    // Função de login com a API
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await api.post('/auth/login', {
+                username,
+                password,
+            });
+
+            if (response.status === 200) {
+                setError('');
+                navigate('/admin/cadastrar');
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                setError('Usuário ou senha inválidos ou conta inativa.');
+            } else {
+                setError('Erro ao conectar com o servidor. Tente novamente.');
+            }
+            console.error('Erro ao autenticar:', error);
         }
     };
 

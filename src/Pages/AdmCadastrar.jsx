@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/AdmCadastrar.css';
-import API_URL from '../apiConfig';
-
+import { api } from '../Service/api';
 
 const cursoMap = {
     "Análise e Desenvolvimento de Sistemas": "ADS",
@@ -40,12 +39,13 @@ const FormularioVaga = ({ onClose }) => {
         link: '',
         beneficios: '',
         requisitos: '',
-        modelo: 'PRESENCIAL', 
+        modelo: 'PRESENCIAL',
         diferenciais: '',
         responsabilidades: '',
         dataPublicacao: new Date().toISOString().split('T')[0],
         statusVaga: 'ABERTO',
     });
+
     const [cursosSelecionados, setCursosSelecionados] = useState([]);
     const [error, setError] = useState('');
 
@@ -56,7 +56,7 @@ const FormularioVaga = ({ onClose }) => {
 
     const handleCursoChange = (e) => {
         const { value, checked } = e.target;
-        setCursosSelecionados(prev => 
+        setCursosSelecionados(prev =>
             checked ? [...prev, value] : prev.filter(curso => curso !== value)
         );
     };
@@ -80,22 +80,18 @@ const FormularioVaga = ({ onClose }) => {
         };
 
         try {
-            const response = await fetch(`${API_URL}/vagas`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(vagaDTO),
-            });
+            const response = await api.post('/vagas', vagaDTO);
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Falha ao cadastrar vaga');
+            // Verifica se a resposta veio corretamente
+            if (!response || !response.data) {
+                throw new Error('Resposta inválida do servidor.');
             }
 
-            alert('Vaga cadastrada com sucesso!');
+            alert('✅ Vaga cadastrada com sucesso!');
             onClose();
         } catch (err) {
-            console.error("Erro ao cadastrar vaga:", err);
-            setError(`Erro: ${err.message}`);
+            console.error('Erro ao cadastrar vaga:', err);
+            setError(err.response?.data?.message || err.message || 'Erro inesperado ao cadastrar vaga.');
         }
     };
 
@@ -103,6 +99,7 @@ const FormularioVaga = ({ onClose }) => {
         <form className="admin-form" onSubmit={handleSubmit}>
             <h2>Cadastrar Nova Vaga</h2>
             {error && <p className="error-message">{error}</p>}
+            
             <div className="form-fields">
                 <label>Empresa <input type="text" name="empresa" value={formData.empresa} onChange={handleChange} required /></label>
                 <label>Título da Vaga <input type="text" name="titulo" value={formData.titulo} onChange={handleChange} required /></label>
@@ -110,6 +107,7 @@ const FormularioVaga = ({ onClose }) => {
                 <label>Período (Horário) <input type="text" name="periodo" value={formData.periodo} onChange={handleChange} /></label>
                 <label>Canal de Inscrição <input type="text" name="canal" value={formData.canal} onChange={handleChange} /></label>
                 <label>Link da Vaga <input type="url" name="link" value={formData.link} onChange={handleChange} required /></label>
+
                 <label>Modelo de Trabalho
                     <select name="modelo" value={formData.modelo} onChange={handleChange}>
                         <option value="PRESENCIAL">Presencial</option>
@@ -117,14 +115,28 @@ const FormularioVaga = ({ onClose }) => {
                         <option value="HOME_OFFICE">Home Office</option>
                     </select>
                 </label>
-                <label>Data de Publicação <input type="date" name="dataPublicacao" value={formData.dataPublicacao} onChange={handleChange} required /></label>
+
+                <label>Data de Publicação
+                    <input type="date" name="dataPublicacao" value={formData.dataPublicacao} onChange={handleChange} required />
+                </label>
             </div>
 
-            <label>Benefícios (separados por vírgula) <textarea name="beneficios" value={formData.beneficios} onChange={handleChange} rows="3"></textarea></label>
-            <label>Requisitos (separados por vírgula) <textarea name="requisitos" value={formData.requisitos} onChange={handleChange} rows="3"></textarea></label>
-            <label>Diferenciais (separados por vírgula) <textarea name="diferenciais" value={formData.diferenciais} onChange={handleChange} rows="3"></textarea></label>
-            <label>Responsabilidades (separadas por vírgula) <textarea name="responsabilidades" value={formData.responsabilidades} onChange={handleChange} rows="4"></textarea></label>
-            
+            <label>Benefícios (separados por vírgula)
+                <textarea name="beneficios" value={formData.beneficios} onChange={handleChange} rows="3"></textarea>
+            </label>
+
+            <label>Requisitos (separados por vírgula)
+                <textarea name="requisitos" value={formData.requisitos} onChange={handleChange} rows="3"></textarea>
+            </label>
+
+            <label>Diferenciais (separados por vírgula)
+                <textarea name="diferenciais" value={formData.diferenciais} onChange={handleChange} rows="3"></textarea>
+            </label>
+
+            <label>Responsabilidades (separadas por vírgula)
+                <textarea name="responsabilidades" value={formData.responsabilidades} onChange={handleChange} rows="4"></textarea>
+            </label>
+
             <div className="form-group-cursos">
                 <h4>Cursos Alvo (Selecione ao menos um)</h4>
                 <div className="cursos-checkbox-container">
@@ -152,6 +164,7 @@ const AdmCadastrar = () => {
                     <FontAwesomeIcon icon={faPlus} /> NOVA VAGA
                 </button>
             </div>
+
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <FormularioVaga onClose={() => setIsModalOpen(false)} />
             </Modal>

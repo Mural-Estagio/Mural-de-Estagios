@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faEllipsisV, faBuilding, faClock, faMoneyBillWave,
+    faBuilding, faClock, faMoneyBillWave,
     faMapMarkerAlt, faBriefcase, faShareAlt 
 } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css'; 
-import API_URL from '../apiConfig';
+import { api } from '../Service/api';
 
+// --- Mapeamento de cursos ---
 const cursoMap = {
     "Análise e Desenvolvimento de Sistemas": "ADS",
     "Desenvolvimento de Software Multiplataforma": "DSM",
@@ -20,13 +21,20 @@ const cursoMap = {
 };
 
 const cursosFiltro = Object.keys(cursoMap);
-const habilidadesFiltro = ['Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização', 'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol', 'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript', 'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git', 'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'];
+const habilidadesFiltro = [
+    'Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização',
+    'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol',
+    'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript',
+    'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git',
+    'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'
+];
 
+// --- COMPONENTE DE CARTÃO DE VAGA ---
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
 
     const handleShare = (e) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         const link = `${window.location.origin}/vagas/${vaga.id}`;
         navigator.clipboard.writeText(link)
             .then(() => {
@@ -44,18 +52,19 @@ const JobCard = ({ vaga }) => {
             default: return { icon: faMapMarkerAlt, text: modelo || 'Não informado' };
         }
     };
+
     const modeloInfo = getModeloInfo(vaga.modelo);
-        const getInitials = (name) => {
+
+    const getInitials = (name) => {
         if (!name) return '?';
-        const words = name.trim().split(/\s+/); 
+        const words = name.trim().split(/\s+/);
         if (words.length > 1) {
             return (words[0][0] + words[words.length - 1][0]).toUpperCase();
         } else if (words.length === 1 && words[0].length > 1) {
-             return words[0].substring(0, 2).toUpperCase();
+            return words[0].substring(0, 2).toUpperCase();
         }
         return name[0]?.toUpperCase() || '?';
     };
-
 
     return (
         <Link to={`/vagas/${vaga.id}`} className="job-card-link">
@@ -69,7 +78,12 @@ const JobCard = ({ vaga }) => {
                         <p className="card-company">{vaga.empresa}</p>
                     </div>
                     <div className="options-container">
-                        <button className="options-btn share-btn" aria-label="Partilhar vaga" onClick={handleShare} title="Copiar link da vaga">
+                        <button
+                            className="options-btn share-btn"
+                            aria-label="Partilhar vaga"
+                            onClick={handleShare}
+                            title="Copiar link da vaga"
+                        >
                             <FontAwesomeIcon icon={faShareAlt} />
                         </button>
                         {copied && <span className="copy-feedback">Link Copiado!</span>}
@@ -94,8 +108,8 @@ const JobCard = ({ vaga }) => {
                 </div>
 
                 <div className="card-body">
-                    {vaga.responsabilidades && vaga.responsabilidades.length > 0 && (
-                         <p>
+                    {vaga.responsabilidades?.length > 0 && (
+                        <p>
                             {vaga.responsabilidades.join(', ').length > 150
                                 ? `${vaga.responsabilidades.join(', ').substring(0, 150)}...`
                                 : vaga.responsabilidades.join(', ')
@@ -106,7 +120,9 @@ const JobCard = ({ vaga }) => {
 
                 <div className="card-footer">
                     <span className="card-date">
-                        Publicado em: {vaga.dataPublicacao ? new Date(vaga.dataPublicacao).toLocaleDateString('pt-BR') : 'N/D'}
+                        Publicado em: {vaga.dataPublicacao
+                            ? new Date(vaga.dataPublicacao).toLocaleDateString('pt-BR')
+                            : 'N/D'}
                     </span>
                 </div>
             </div>
@@ -114,8 +130,7 @@ const JobCard = ({ vaga }) => {
     );
 };
 
-
-// --- COMPONENTE VAGAS ---
+// --- COMPONENTE PRINCIPAL ---
 const Vagas = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -133,26 +148,26 @@ const Vagas = () => {
         skills: []
     });
 
+    // --- Buscar vagas com axios ---
     useEffect(() => {
         const fetchVagas = async () => {
             setLoading(true);
             setError(null);
-            let url = `${API_URL}/vagas`; 
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Falha ao buscar vagas da API');
-                const data = await response.json();
-                setVagas(data);
+                const response = await api.get('/vagas');
+                if (!response.data) throw new Error('Nenhuma vaga encontrada');
+                setVagas(response.data);
             } catch (error) {
                 console.error("Erro ao buscar vagas:", error);
-                setError(error.message);
+                setError(error.response?.data?.message || error.message || 'Erro ao carregar vagas');
             } finally {
                 setLoading(false);
             }
         };
         fetchVagas();
-    }, []); 
+    }, []);
 
+    // --- Aplicar filtros ---
     useEffect(() => {
         let vagasParaFiltrar = [...vagas];
 
@@ -175,29 +190,28 @@ const Vagas = () => {
             );
         }
 
-        // Filtros adicionais (turno, skills)
+        // Filtro por turno e habilidades
         vagasParaFiltrar = vagasParaFiltrar.filter(vaga => {
             const { shift, skills } = filters;
 
-            // Filtro de Turno
-            const shiftMatch = (!shift.manha && !shift.tarde && !shift.noite) ||
-                               (shift.manha && vaga.periodo?.toLowerCase().includes('manhã')) ||
-                               (shift.tarde && vaga.periodo?.toLowerCase().includes('tarde')) ||
-                               (shift.noite && vaga.periodo?.toLowerCase().includes('noite'));
+            const shiftMatch =
+                (!shift.manha && !shift.tarde && !shift.noite) ||
+                (shift.manha && vaga.periodo?.toLowerCase().includes('manhã')) ||
+                (shift.tarde && vaga.periodo?.toLowerCase().includes('tarde')) ||
+                (shift.noite && vaga.periodo?.toLowerCase().includes('noite'));
 
-             // Filtro de Habilidades
-            const skillsMatch = skills.length === 0 ||
-                                skills.every(skill =>
-                                    vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
-                                    vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
-                                );
+            const skillsMatch =
+                skills.length === 0 ||
+                skills.every(skill =>
+                    vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
+                    vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
+                );
 
             return shiftMatch && skillsMatch;
         });
 
         setFilteredVagas(vagasParaFiltrar);
-
-    }, [vagas, filters]); 
+    }, [vagas, filters]);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -206,15 +220,17 @@ const Vagas = () => {
             if (['manha', 'tarde', 'noite'].includes(name)) {
                 setFilters(prev => ({ ...prev, shift: { ...prev.shift, [name]: checked } }));
             } else if (name === 'course') {
-                const currentValues = filters.courses;
-                const newCourses = checked ? [...currentValues, value] : currentValues.filter(item => item !== value);
+                const newCourses = checked
+                    ? [...filters.courses, value]
+                    : filters.courses.filter(item => item !== value);
                 setFilters(prev => ({ ...prev, courses: newCourses }));
             } else if (name === 'skill') {
-                const currentValues = filters.skills;
-                const newSkills = checked ? [...currentValues, value] : currentValues.filter(item => item !== value);
+                const newSkills = checked
+                    ? [...filters.skills, value]
+                    : filters.skills.filter(item => item !== value);
                 setFilters(prev => ({ ...prev, skills: newSkills }));
             }
-        } else { 
+        } else {
             setFilters(prev => ({ ...prev, [name]: value }));
         }
     };
@@ -254,7 +270,13 @@ const Vagas = () => {
                         <div className="checkbox-group scrollable">
                             {cursosFiltro.map(curso => (
                                 <label key={curso}>
-                                    <input type="checkbox" name="course" value={curso} checked={filters.courses.includes(curso)} onChange={handleInputChange}/> {curso}
+                                    <input
+                                        type="checkbox"
+                                        name="course"
+                                        value={curso}
+                                        checked={filters.courses.includes(curso)}
+                                        onChange={handleInputChange}
+                                    /> {curso}
                                 </label>
                             ))}
                         </div>
@@ -265,7 +287,13 @@ const Vagas = () => {
                         <div className="checkbox-group scrollable">
                             {habilidadesFiltro.map(skill => (
                                 <label key={skill}>
-                                    <input type="checkbox" name="skill" value={skill} checked={filters.skills.includes(skill)} onChange={handleInputChange}/> {skill}
+                                    <input
+                                        type="checkbox"
+                                        name="skill"
+                                        value={skill}
+                                        checked={filters.skills.includes(skill)}
+                                        onChange={handleInputChange}
+                                    /> {skill}
                                 </label>
                             ))}
                         </div>
@@ -274,7 +302,7 @@ const Vagas = () => {
 
                 {/* --- Lista de Vagas --- */}
                 <main className="job-listings">
-                    {loading && <p className="loading-message">A carregar vagas...</p>}
+                    {loading && <p className="loading-message">Carregando vagas...</p>}
                     {error && <p className="no-results error-message">Erro ao carregar vagas: {error}</p>}
                     {!loading && !error && filteredVagas.length > 0 ? (
                         filteredVagas.map(vaga => <JobCard key={vaga.id} vaga={vaga} />)
