@@ -5,21 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCalendarAlt, faPrint, faMoneyBillWave,
     faClock, faMapMarkerAlt, faBriefcase, faBuilding, faListCheck,
-    faStar, faAward, faUsers, faExternalLinkAlt, faArrowLeft 
+    faStar, faAward, faUsers, faExternalLinkAlt, faArrowLeft,
+    faFileDownload // <-- ÍCONE ADICIONADO
 } from '@fortawesome/free-solid-svg-icons';
 import { api } from '../Service/api';
 import { QRCodeCanvas } from 'qrcode.react';
 
-const cursoMap = {
-    "ADS": "Análise e Desenvolvimento de Sistemas",
-    "DSM": "Desenvolvimento de Software Multiplataforma",
-    "COMEX": "Comércio Exterior",
-    "RH": "Gestão de Recursos Humanos",
-    "GESTAO_EMPRESARIAL": "Gestão Empresarial",
-    "POLIMEROS": "Polímeros",
-    "LOGISTICA": "Logística",
-    "DPP": "Desenvolvimento de Produtos Plásticos"
-};
+// --- MAPA DE CURSOS (SERÁ CARREGADO DA API) ---
+// const cursoMap = { ... }; // REMOVIDO
 
 const VagaDetalhada = () => {
     const { vagaId } = useParams();
@@ -27,11 +20,26 @@ const VagaDetalhada = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentUrl, setCurrentUrl] = useState('');
+    const [cursoMap, setCursoMap] = useState({}); // NOVO ESTADO
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setCurrentUrl(window.location.href);
         }
+
+        // --- Buscar cursos da API ---
+        const fetchCursos = async () => {
+            try {
+                const response = await api.get('/cursos');
+                const map = response.data.reduce((acc, curso) => {
+                    acc[curso.sigla] = curso.nomeCompleto; // [SIGLA] -> Nome Completo
+                    return acc;
+                }, {});
+                setCursoMap(map);
+            } catch (err) {
+                console.error("Erro ao buscar cursos:", err);
+            }
+        };
 
         const fetchVagaDetalhada = async () => {
             setLoading(true);
@@ -52,6 +60,7 @@ const VagaDetalhada = () => {
             }
         };
 
+        fetchCursos(); // Chama a busca de cursos
         fetchVagaDetalhada();
     }, [vagaId]);
 
@@ -160,7 +169,28 @@ const VagaDetalhada = () => {
                     </div>
                 )}
 
-                {/* --- Cursos Alvo --- */}
+                {/* --- [NOVA SEÇÃO] DOCUMENTO ANEXO (FOLDER) --- */}
+                {vaga.folderUrl && (
+                    <div className="vaga-secao no-print">
+                        <h3><FontAwesomeIcon icon={faFileDownload} /> Documento Anexo</h3>
+                        <p>A empresa disponibilizou um documento com mais detalhes sobre a vaga. Clique no botão abaixo para visualizá-lo.</p>
+                        {/* NOTA: Este link aponta para vaga.folderUrl. No backend, ainda precisamos
+                            implementar a lógica para servir o arquivo estático desse diretório.
+                            Por enquanto, o link é gerado (ex: /uploads/vagas/Nome_Empresa_arquivo.pdf)
+                        */}
+                        <a 
+                            href={vaga.folderUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="ir-para-vaga-btn primary"
+                            style={{maxWidth: '300px', margin: '10px auto 0 auto'}} // Estilo inline para centralizar e limitar
+                        >
+                            <FontAwesomeIcon icon={faFileDownload} /> Baixar Anexo
+                        </a>
+                    </div>
+                )}
+
+                {/* --- Cursos Alvo (agora dinâmico) --- */}
                 {vaga.cursosAlvo?.length > 0 && (
                     <div className="vaga-secao print-only">
                         <h3>Cursos Alvo</h3>

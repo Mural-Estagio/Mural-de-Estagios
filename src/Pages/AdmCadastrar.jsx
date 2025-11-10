@@ -1,20 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'; // faUpload adicionado
 import '../Styles/AdmCadastrar.css';
 import { api } from '../Service/api';
 
-const cursoMap = {
-    "Análise e Desenvolvimento de Sistemas": "ADS",
-    "Desenvolvimento de Software Multiplataforma": "DSM",
-    "Comércio Exterior": "COMEX",
-    "Gestão de Recursos Humanos": "RH",
-    "Gestão Empresarial": "GESTAO_EMPRESARIAL",
-    "Polímeros": "POLIMEROS",
-    "Logística": "LOGISTICA",
-    "Desenvolvimento de Produtos Plásticos": "DPP"
-};
-
+// --- MODAL COMPONENT ---
 const Modal = ({ children, isOpen, onClose }) => {
     if (!isOpen) return null;
     return (
@@ -29,6 +19,74 @@ const Modal = ({ children, isOpen, onClose }) => {
     );
 };
 
+
+// --- FORMULÁRIO DE CURSO (NOVO) ---
+const FormularioCurso = ({ onClose }) => {
+    const [cursos, setCursos] = useState([]);
+    const [nomeCompleto, setNomeCompleto] = useState('');
+    const [sigla, setSigla] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const fetchCursos = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get('/cursos');
+            setCursos(response.data);
+            setError('');
+        } catch (err) { setError('Erro ao buscar cursos.'); }
+        finally { setLoading(false); }
+    };
+
+    useEffect(() => { fetchCursos(); }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            await api.post('/cursos', { nomeCompleto, sigla });
+            setNomeCompleto('');
+            setSigla('');
+            fetchCursos(); // Refresh list
+        } catch (err) { setError(err.response?.data?.message || 'Erro ao salvar curso.'); }
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Tem certeza que deseja excluir este curso? Vagas associadas a ele podem perder a referência.')) {
+            try {
+                await api.delete(`/cursos/${id}`);
+                fetchCursos(); // Refresh list
+            } catch (err) { setError('Erro ao excluir curso.'); }
+        }
+    };
+
+    return (
+        <div className="admin-form">
+            <h2>Gerenciar Cursos</h2>
+            {error && <p className="error-message">{error}</p>}
+            <form onSubmit={handleSubmit} className="form-fields">
+                <label>Nome Completo <input type="text" value={nomeCompleto} onChange={(e) => setNomeCompleto(e.target.value)} required /></label>
+                <label>Sigla (ex: ADS) <input type="text" value={sigla} onChange={(e) => setSigla(e.target.value)} required /></label>
+                <button type="submit" className="submit-button">ADICIONAR CURSO</button>
+            </form>
+            <hr style={{margin: '20px 0'}} />
+            <h4>Cursos Existentes</h4>
+            {loading ? <p>Carregando cursos...</p> : (
+                <ul className="curso-list">
+                    {cursos.map(curso => (
+                        <li key={curso.id}>
+                            <span>{curso.nomeCompleto} ({curso.sigla})</span>
+                            <button onClick={() => handleDelete(curso.id)} className="delete-btn">Excluir</button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
+
+
+// --- FORMULÁRIO DE VAGA (MODIFICADO) ---
 const FormularioVaga = ({ onClose }) => {
     const [formData, setFormData] = useState({
         empresa: '',
@@ -46,8 +104,23 @@ const FormularioVaga = ({ onClose }) => {
         statusVaga: 'ABERTO',
     });
 
+    const [cursosDisponiveis, setCursosDisponiveis] = useState({});
     const [cursosSelecionados, setCursosSelecionados] = useState([]);
+    const [file, setFile] = useState(null); // Estado para o arquivo
     const [error, setError] = useState('');
+
+    // Buscar cursos da API
+    useEffect(() => {
+        api.get('/cursos')
+            .then(response => {
+                const cursosMap = response.data.reduce((acc, curso) => {
+                    acc[curso.nomeCompleto] = curso.sigla;
+                    return acc;
+                }, {});
+                setCursosDisponiveis(cursosMap);
+            })
+            .catch(err => console.error("Erro ao buscar cursos", err));
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -59,6 +132,10 @@ const FormularioVaga = ({ onClose }) => {
         setCursosSelecionados(prev =>
             checked ? [...prev, value] : prev.filter(curso => curso !== value)
         );
+    };
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
@@ -79,10 +156,21 @@ const FormularioVaga = ({ onClose }) => {
             cursosAlvo: cursosSelecionados,
         };
 
-        try {
-            const response = await api.post('/vagas', vagaDTO);
+        // Criar FormData para enviar JSON + Arquivo
+        const formDataToSend = new FormData();
+        formDataToSend.append('vagaDTO', JSON.stringify(vagaDTO));
+        
+        if (file) {
+            formDataToSend.append('file', file);
+        }
 
-            // Verifica se a resposta veio corretamente
+        try {
+            const response = await api.post('/vagas', formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Header é definido automaticamente pelo axios com FormData
+                },
+            });
+
             if (!response || !response.data) {
                 throw new Error('Resposta inválida do servidor.');
             }
@@ -137,10 +225,26 @@ const FormularioVaga = ({ onClose }) => {
                 <textarea name="responsabilidades" value={formData.responsabilidades} onChange={handleChange} rows="4"></textarea>
             </label>
 
+            {/* CAMPO DE UPLOAD DE ARQUIVO */}
+            <label>Folder (Opcional)
+                <div className="upload-area" onClick={() => document.getElementById('file-upload').click()}>
+                    <input type="file" id="file-upload" onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx" />
+                    {file ? (
+                        <span>Arquivo selecionado: {file.name}</span>
+                    ) : (
+                        <>
+                            <FontAwesomeIcon icon={faUpload} />
+                            <span>Clique para adicionar um folder (PDF, DOCX)</span>
+                        </>
+                    )}
+                </div>
+            </label>
+
+
             <div className="form-group-cursos">
                 <h4>Cursos Alvo (Selecione ao menos um)</h4>
                 <div className="cursos-checkbox-container">
-                    {Object.entries(cursoMap).map(([fullName, sigla]) => (
+                    {Object.entries(cursosDisponiveis).map(([fullName, sigla]) => (
                         <label key={sigla} className="curso-checkbox">
                             <input type="checkbox" value={sigla} onChange={handleCursoChange} /> {fullName}
                         </label>
@@ -153,20 +257,30 @@ const FormularioVaga = ({ onClose }) => {
     );
 };
 
+
+// --- COMPONENTE PRINCIPAL (MODIFICADO) ---
 const AdmCadastrar = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isVagaModalOpen, setIsVagaModalOpen] = useState(false);
+    const [isCursoModalOpen, setIsCursoModalOpen] = useState(false);
 
     return (
         <div className="admin-page">
             <h1 className="admin-title">PAINEL DE CADASTRO</h1>
             <div className="admin-actions">
-                <button className="action-button" onClick={() => setIsModalOpen(true)}>
+                <button className="action-button" onClick={() => setIsVagaModalOpen(true)}>
                     <FontAwesomeIcon icon={faPlus} /> NOVA VAGA
+                </button>
+                <button className="action-button" onClick={() => setIsCursoModalOpen(true)}>
+                    <FontAwesomeIcon icon={faPlus} /> GERENCIAR CURSOS
                 </button>
             </div>
 
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <FormularioVaga onClose={() => setIsModalOpen(false)} />
+            <Modal isOpen={isVagaModalOpen} onClose={() => setIsVagaModalOpen(false)}>
+                <FormularioVaga onClose={() => setIsVagaModalOpen(false)} />
+            </Modal>
+
+            <Modal isOpen={isCursoModalOpen} onClose={() => setIsCursoModalOpen(false)}>
+                <FormularioCurso onClose={() => setIsCursoModalOpen(false)} />
             </Modal>
         </div>
     );

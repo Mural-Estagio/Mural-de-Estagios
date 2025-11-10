@@ -1,5 +1,4 @@
-// src/App.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; 
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/Home.jsx";
 import Vagas from "./Pages/Vagas.jsx";
@@ -12,14 +11,27 @@ import DocumentosNaoObrigatorios from "./Pages/DocumentosNaoObrigatorios.jsx";
 import VagaDetalhada from "./Pages/VagaDetalhada.jsx"; 
 import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
+import { api } from "./Service/api.js"; 
 import "./Styles/global.css";
 
 
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const cursos = [ "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma", "Comércio Exterior", "Gestão Empresarial", "Logística", "Polímeros", "Recursos Humanos", "Desenvolvimento de Produtos Plásticos" ];
+  const [cursoList, setCursoList] = useState([]); 
   const documentos = ["Estágio Obrigatório", "Estágio Não Obrigatório"];
+
+  useEffect(() => {
+    const fetchCursos = async () => {
+        try {
+            const response = await api.get('/cursos');
+            setCursoList(response.data); 
+        } catch (err) {
+            console.error("Erro ao buscar cursos:", err);
+
+        }
+    };
+    fetchCursos();
+  }, []); 
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -27,9 +39,14 @@ function App() {
 
   return (
     <>
-      <Layout toggleMobileMenu={toggleMobileMenu} cursos={cursos} documentos={documentos}>
+      <Layout 
+        toggleMobileMenu={toggleMobileMenu} 
+        cursos={cursoList} 
+        documentos={documentos} 
+      >
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* Passa a lista dinâmica de cursos para a HomePage */}
+          <Route path="/" element={<HomePage cursos={cursoList} />} /> 
           <Route path="/vagas" element={<Vagas />} />
           <Route path="/vagas/:vagaId" element={<VagaDetalhada />} /> 
           <Route path="/curriculo" element={<Curriculo />} />
@@ -44,7 +61,7 @@ function App() {
       <MobileMenu
         isOpen={isMobileMenuOpen}
         toggleMenu={toggleMobileMenu}
-        cursos={cursos}
+        cursos={cursoList} 
         documentos={documentos}
       />
     </>

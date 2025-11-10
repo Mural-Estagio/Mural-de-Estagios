@@ -1,8 +1,42 @@
-/* --- Classes de Animação de Scroll --- */
+/* --- HomePage.css --- */
+:root {
+    --primary-color: #0056b3; /* Azul mais escuro */
+    --primary-color-dark: #004085;
+    --secondary-color: #6c757d; /* Cinza */
+    --background-page: #f8f9fa; /* Cinza claro */
+    --background-card: #ffffff;
+    --text-dark: #212529; /* Preto */
+    --text-medium: #495057; /* Cinza escuro */
+    --text-light: #6c757d; /* Cinza médio */
+    --border-light: #dee2e6; /* Borda cinza clara */
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--background-page);
+    color: var(--text-dark);
+}
+
+.homepage-container {
+    padding-bottom: 50px; /* Espaçamento inferior para a página */
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
 .home-section {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(20px);
     transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    padding: 50px 0;
 }
 
 .home-section.is-visible {
@@ -10,22 +44,62 @@
     transform: translateY(0);
 }
 
-.section-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    color: var(--primary-color-dark);
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 700;
 }
 
-.home-section {
-    padding: 80px 0;
+.section-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-/* --- Seção de Introdução (Hero) --- */
+.section-description {
+    font-size: 1.1rem;
+    color: var(--text-medium);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    line-height: 1.6;
+}
+
+.cta-button {
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0 auto;
+    padding: 12px 25px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cta-button:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Hero Section --- */
 .hero-section {
     position: relative;
-    height: 300px;
-    overflow: hidden;
+    height: 450px; /* Altura fixa para o carrossel */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Garante que as imagens do carrossel não transbordem */
+    padding: 0; /* Remove padding padrão */
 }
 
 .hero-carousel-wrapper {
@@ -34,97 +108,123 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: 0;
 }
 
-.hero-carousel .hero-slide {
-    width: 100%;
-    height: 100%;
+.hero-carousel .slick-slide {
+    height: 450px; /* Altura do slide */
 }
 
 .hero-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Garante que a imagem cubra todo o slide */
+    filter: brightness(60%); /* Escurece a imagem para o texto ser legível */
 }
 
 .hero-overlay {
     position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    z-index: 1;
     color: white;
     text-align: center;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    background: none; /* Remove background extra */
+    padding: 0; /* Remove padding extra */
 }
-
 
 .hero-title {
     font-family: 'Poppins', sans-serif;
     font-size: 3.5rem;
-    color: #222;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
-    font-size: 1.6rem;
-    color: #111;
-    margin-top: 10px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    font-size: 1.5rem;
+    font-weight: 400;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* --- Seção de Cursos --- */
+/* --- Courses Section (AGORA DINÂMICA E RESPONSIVA) --- */
 .courses-section {
-    background-color: var(--primary-color);
+    background-color: var(--background-page);
+    padding: 60px 0;
 }
 
 .course-cards-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
-    margin-top: 30px;
+    display: grid; /* Usamos grid para um controle mais flexível */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adapta automaticamente */
+    gap: 25px; /* Espaçamento entre os cards */
+    justify-content: center; /* Centraliza os cards */
+    margin-top: 40px;
 }
 
 .course-card {
-    background-color: white;
+    background-color: var(--background-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     text-decoration: none;
-    color: #333;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
+    color: var(--text-dark);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    display: flex; /* Para centralizar conteúdo verticalmente */
     flex-direction: column;
-    justify-content: space-between;
-    width: 350px;
-    flex-grow: 1;
-    max-width: 400px;
-    min-height: 180px;
-    text-align: left;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px; /* Garante altura mínima para todos os cards */
 }
 
 .course-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
 }
 
 .course-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary-color-dark);
+    white-space: nowrap; /* Impede quebra de linha inicial */
+    overflow: hidden; /* Oculta o que transborda */
+    text-overflow: ellipsis; /* Adiciona "..." */
+    max-width: 100%; /* Garante que o texto respeite o card */
 }
 
 .course-card span {
-    font-weight: bold;
-    color: var(--primary-color);
-    align-self: flex-end;
+    font-size: 0.95rem;
+    color: var(--text-medium);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
+.course-card span svg {
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
 
+.course-card:hover span svg {
+    transform: translateX(5px);
+    color: var(--primary-color);
+}
+
+/* --- Why Fatec Section --- */
 .why-fatec-section {
-    background-color: #f9f9f9;
+    background-color: #e9ecef; /* Um cinza um pouco mais escuro */
+    padding: 60px 0;
+}
+
+.why-fatec-section .section-title {
+    color: var(--text-dark);
+}
+
+.why-fatec-section .section-description {
+    margin-bottom: 50px;
 }
 
 .features-grid {
@@ -135,206 +235,199 @@
 }
 
 .feature-card {
+    background-color: var(--background-card);
+    padding: 30px;
+    border-radius: 10px;
     text-align: center;
-    padding: 20px;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
 }
 
 .feature-icon {
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: var(--primary-color);
     margin-bottom: 20px;
-    transition: transform 0.3s ease;
-}
-
-.feature-card:hover .feature-icon {
-    transform: scale(1.1) rotate(5deg);
 }
 
 .feature-card h3 {
-    font-size: 1.3rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
     margin-bottom: 10px;
+    color: var(--text-dark);
 }
 
 .feature-card p {
-    color: #666;
+    font-size: 1rem;
+    color: var(--text-medium);
     line-height: 1.6;
 }
 
 
-/* --- Seções com Títulos --- */
-.section-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-align: center;
-}
-
-.events-section .section-title,
-.documents-section .section-title,
-.why-fatec-section .section-title {
-    color: #333;
-}
-
-.resumes-section .section-title {
-    color: white;
-    text-align: left;
-}
-
-.section-description {
-    max-width: 600px;
-    margin: 0 auto 30px auto;
-    color: #666;
-    line-height: 1.6;
-    text-align: center;
-}
-
-/* --- Seção de Eventos --- */
-.events-carousel {
-    padding: 40px 0;
-}
-
-.slick-slide>div {
-    padding: 0 10px;
-}
-
-
-.event-banner {
-    background-color: #e0e0e0;
-    height: 350px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-    color: #888;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.event-banner:hover {
-    transform: scale(1.03);
-}
-
-.placeholder-1 {
-    background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);
-    color: white;
-}
-
-.placeholder-2 {
-    background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
-    color: white;
-}
-
-.placeholder-3 {
-    background-image: linear-gradient(to top, #96fbc4 0%, #f9f586 100%);
-    color: #333;
-}
-
-.placeholder-4 {
-    background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
-    color: white;
-}
-
-.slick-dots li button:before {
-    font-size: 12px;
-    color: var(--primary-color);
-}
-
-.slick-dots li.slick-active button:before {
-    color: var(--primary-color);
-    opacity: 1;
-}
-
-/* --- Seção de Currículos --- */
+/* --- Resumes Section --- */
 .resumes-section {
-    background-color: var(--primary-color);
+    padding: 60px 0;
+    background-color: var(--background-card);
 }
 
 .resume-container-flex {
     display: flex;
     align-items: center;
     gap: 40px;
-    flex-wrap: wrap;
+    text-align: left;
 }
 
 .resume-visual {
     flex: 1;
-    min-width: 300px;
-    height: 300px;
-    background-image: url('https://www.catho.com.br/carreira-sucesso/wp-content/uploads/sites/3/2021/12/criatividade-1-1024x576.jpg');
-    /* Imagem de exemplo */
+    min-height: 300px;
     background-size: cover;
     background-position: center;
-    border-radius: 12px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
 }
 
 .resume-content {
-    flex: 1.5;
-    text-align: left;
+    flex: 1;
 }
 
-.resumes-section .section-subtitle {
-    color: rgba(255, 255, 255, 0.8);
+.resume-content .section-title {
+    text-align: left;
+    font-size: 2.rem;
+    margin-bottom: 5px;
+}
+
+.resume-content .section-subtitle {
+    text-align: left;
+    font-size: 1.2rem;
+    color: var(--text-light);
     margin-bottom: 20px;
 }
 
-.resumes-section .section-description {
-    color: rgba(255, 255, 255, 0.9);
+.resume-content .section-description {
     text-align: left;
     margin: 0 0 30px 0;
+    max-width: none;
 }
 
-.cta-button {
-    background-color: white;
-    color: var(--primary-color);
-    padding: 12px 30px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-    display: inline-block;
-    margin-top: 20px;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+.resume-content .cta-button {
+    margin: 0;
+    width: fit-content;
 }
 
-.cta-button:hover {
-    transform: scale(1.05);
-    background-color: #f0f0f0;
+/* --- Documents Section --- */
+.documents-section {
+    padding: 60px 0;
+    background-color: #f0f0f0; /* Um fundo levemente diferente */
 }
 
-/* --- Seção de Documentos --- */
 .document-options {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    margin: 40px 0;
-    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 40px;
+    flex-wrap: wrap; /* Permite que os cards quebrem para a próxima linha */
 }
 
 .document-card {
-    background-color: white;
-    width: 250px;
-    height: 200px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    background-color: var(--background-card);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease;
     text-decoration: none;
-    color: #333;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: var(--text-dark);
+    flex: 1; /* Permite que o card cresça e ocupe espaço */
+    min-width: 280px; /* Largura mínima para o card */
+    max-width: 400px; /* Largura máxima para o card */
 }
 
 .document-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
 }
 
 .document-icon {
     font-size: 3rem;
     color: var(--primary-color);
     margin-bottom: 20px;
+}
+
+.document-card h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.documents-section .section-description {
+    margin-top: 50px;
+    color: var(--text-light);
+}
+
+
+/* --- Responsividade --- */
+@media (max-width: 992px) {
+    .hero-title { font-size: 3rem; }
+    .hero-subtitle { font-size: 1.3rem; }
+    .section-title { font-size: 1.8rem; }
+    .section-description { font-size: 1rem; }
+
+    .course-card h3 { font-size: 1.2rem; }
+    .feature-card h3 { font-size: 1.2rem; }
+    .feature-card p { font-size: 0.95rem; }
+
+    .resume-container-flex { flex-direction: column; text-align: center; }
+    .resume-visual { width: 100%; height: 250px; }
+    .resume-content .section-title,
+    .resume-content .section-subtitle,
+    .resume-content .section-description { text-align: center; }
+    .resume-content .cta-button { margin: 30px auto 0 auto; }
+}
+
+@media (max-width: 768px) {
+    .hero-section { height: 350px; }
+    .hero-carousel .slick-slide { height: 350px; }
+    .hero-title { font-size: 2.5rem; }
+    .hero-subtitle { font-size: 1.1rem; }
+    
+    .course-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajusta cards menores */
+        gap: 15px;
+    }
+    .course-card { padding: 20px; min-height: 100px; }
+    .course-card h3 { font-size: 1.1rem; }
+    .course-card span { font-size: 0.85rem; }
+
+    .feature-card { padding: 20px; }
+    .feature-card h3 { font-size: 1.1rem; }
+    .feature-icon { font-size: 2rem; }
+
+    .document-card { min-width: 250px; padding: 25px; }
+    .document-card h3 { font-size: 1.3rem; }
+    .document-icon { font-size: 2.5rem; }
+}
+
+@media (max-width: 480px) {
+    .hero-section { height: 300px; }
+    .hero-carousel .slick-slide { height: 300px; }
+    .hero-title { font-size: 2rem; }
+    .hero-subtitle { font-size: 0.9rem; }
+
+    .home-section { padding: 40px 0; }
+    .section-title { font-size: 1.5rem; }
+    .section-subtitle { font-size: 1.1rem; }
+    .section-description { font-size: 0.9rem; margin-bottom: 30px; }
+    .cta-button { padding: 10px 20px; font-size: 0.9rem; }
+
+    .course-cards-grid { grid-template-columns: 1fr; } /* Empilha em telas muito pequenas */
+    .course-card { max-width: 100%; }
+
+    .features-grid { grid-template-columns: 1fr; }
+    .document-options { flex-direction: column; align-items: center; }
+    .document-card { max-width: 90%; }
 }

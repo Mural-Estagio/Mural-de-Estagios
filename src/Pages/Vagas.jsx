@@ -8,28 +8,7 @@ import {
 import '../Styles/Vagas.css'; 
 import { api } from '../Service/api';
 
-// --- Mapeamento de cursos ---
-const cursoMap = {
-    "Análise e Desenvolvimento de Sistemas": "ADS",
-    "Desenvolvimento de Software Multiplataforma": "DSM",
-    "Comércio Exterior": "COMEX",
-    "Gestão de Recursos Humanos": "RH",
-    "Gestão Empresarial": "GESTAO_EMPRESARIAL",
-    "Polímeros": "POLIMEROS",
-    "Logística": "LOGISTICA",
-    "Desenvolvimento de Produtos Plásticos": "DPP"
-};
-
-const cursosFiltro = Object.keys(cursoMap);
-const habilidadesFiltro = [
-    'Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização',
-    'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol',
-    'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript',
-    'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git',
-    'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'
-];
-
-// --- COMPONENTE DE CARTÃO DE VAGA ---
+// ... (Componente JobCard permanece o mesmo) ...
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
 
@@ -130,25 +109,61 @@ const JobCard = ({ vaga }) => {
     );
 };
 
+
+const habilidadesFiltro = [
+    'Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização',
+    'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol',
+    'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript',
+    'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git',
+    'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'
+];
+
 // --- COMPONENTE PRINCIPAL ---
 const Vagas = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const cursoSelecionado = queryParams.get("curso");
+    const headerSearchTerm = location.state?.headerSearch; // <-- Pega o termo vindo do Header
 
     const [vagas, setVagas] = useState([]);
     const [filteredVagas, setFilteredVagas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [cursoMap, setCursoMap] = useState({});
+    const [cursosFiltro, setCursosFiltro] = useState([]);
+
     const [filters, setFilters] = useState({
-        searchTerm: '',
+        searchTerm: headerSearchTerm || '', // <-- Define o valor inicial do filtro
         shift: { manha: false, tarde: false, noite: false },
+        modelo: { presencial: false, hibrido: false, home_office: false },
         courses: cursoSelecionado ? [cursoSelecionado] : [],
         skills: []
     });
 
-    // --- Buscar vagas com axios ---
+    // ... (useEffect de buscar cursos permanece o mesmo) ...
+    useEffect(() => {
+        const fetchCursos = async () => {
+            try {
+                const response = await api.get('/cursos');
+                const cursos = response.data;
+                const map = {};
+                const filtro = [];
+                cursos.forEach(curso => {
+                    map[curso.nomeCompleto] = curso.sigla; // [Nome Completo] -> SIGLA
+                    filtro.push(curso.nomeCompleto);
+                });
+                setCursoMap(map);
+                setCursosFiltro(filtro);
+            } catch (err) {
+                console.error("Erro ao buscar cursos:", err);
+            }
+        };
+        fetchCursos();
+    }, []);
+
+
+    // ... (useEffect de buscar vagas permanece o mesmo) ...
     useEffect(() => {
         const fetchVagas = async () => {
             setLoading(true);
@@ -167,8 +182,13 @@ const Vagas = () => {
         fetchVagas();
     }, []);
 
-    // --- Aplicar filtros ---
+    // ... (useEffect de aplicar filtros permanece o mesmo) ...
     useEffect(() => {
+        // Aguarda o cursoMap carregar se um curso foi selecionado via URL
+        if (cursosFiltro.length === 0 && cursoSelecionado) {
+            return;
+        }
+
         let vagasParaFiltrar = [...vagas];
 
         if (filters.searchTerm.trim()) {
@@ -184,15 +204,15 @@ const Vagas = () => {
 
         // Filtro por curso
         if (filters.courses.length > 0) {
-            const cursosSiglas = filters.courses.map(fullName => cursoMap[fullName]);
+            const cursosSiglas = filters.courses.map(fullName => cursoMap[fullName]).filter(Boolean);
             vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
                 vaga.cursosAlvo?.some(cursoApi => cursosSiglas.includes(cursoApi))
             );
         }
 
-        // Filtro por turno e habilidades
+        // Filtro por turno, habilidades e MODALIDADE
         vagasParaFiltrar = vagasParaFiltrar.filter(vaga => {
-            const { shift, skills } = filters;
+            const { shift, skills, modelo } = filters;
 
             const shiftMatch =
                 (!shift.manha && !shift.tarde && !shift.noite) ||
@@ -206,12 +226,20 @@ const Vagas = () => {
                     vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
                     vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
                 );
+            
+            // LÓGICA DO FILTRO DE MODALIDADE
+            const modeloMatch =
+                (!modelo.presencial && !modelo.hibrido && !modelo.home_office) ||
+                (modelo.presencial && vaga.modelo === 'PRESENCIAL') ||
+                (modelo.hibrido && vaga.modelo === 'HIBRIDO') ||
+                (modelo.home_office && vaga.modelo === 'HOME_OFFICE');
 
-            return shiftMatch && skillsMatch;
+            return shiftMatch && skillsMatch && modeloMatch;
         });
 
         setFilteredVagas(vagasParaFiltrar);
-    }, [vagas, filters]);
+    }, [vagas, filters, cursoMap, cursosFiltro.length, cursoSelecionado]);
+
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -219,6 +247,8 @@ const Vagas = () => {
         if (type === 'checkbox') {
             if (['manha', 'tarde', 'noite'].includes(name)) {
                 setFilters(prev => ({ ...prev, shift: { ...prev.shift, [name]: checked } }));
+            } else if (['presencial', 'hibrido', 'home_office'].includes(name)) { 
+                setFilters(prev => ({ ...prev, modelo: { ...prev.modelo, [name]: checked } }));
             } else if (name === 'course') {
                 const newCourses = checked
                     ? [...filters.courses, value]
@@ -251,17 +281,27 @@ const Vagas = () => {
                             name="searchTerm"
                             placeholder="Buscar por cargo, empresa ou skill..."
                             className="search-input"
-                            value={filters.searchTerm}
+                            value={filters.searchTerm} // O valor agora reflete o estado
                             onChange={handleInputChange}
                         />
                     </div>
 
+                    {/* ... (outros filtros permanecem iguais) ... */}
                     <div className="filter-group">
                         <h4>Turno</h4>
                         <div className="checkbox-group">
                             <label><input type="checkbox" name="manha" checked={filters.shift.manha} onChange={handleInputChange} /> Manhã</label>
                             <label><input type="checkbox" name="tarde" checked={filters.shift.tarde} onChange={handleInputChange} /> Tarde</label>
                             <label><input type="checkbox" name="noite" checked={filters.shift.noite} onChange={handleInputChange} /> Noite</label>
+                        </div>
+                    </div>
+
+                    <div className="filter-group">
+                        <h4>Modalidade</h4>
+                        <div className="checkbox-group">
+                            <label><input type="checkbox" name="presencial" checked={filters.modelo.presencial} onChange={handleInputChange} /> Presencial</label>
+                            <label><input type="checkbox" name="hibrido" checked={filters.modelo.hibrido} onChange={handleInputChange} /> Híbrido</label>
+                            <label><input type="checkbox" name="home_office" checked={filters.modelo.home_office} onChange={handleInputChange} /> Home Office</label>
                         </div>
                     </div>
 

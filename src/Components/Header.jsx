@@ -1,36 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Styles/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
 
-const Header = ({ toggleMobileMenu }) => {
+const Header = ({ toggleMobileMenu, documentos }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchTerm.trim()) {
+            navigate('/vagas', { state: { headerSearch: searchTerm } });
+            setSearchTerm(''); 
+        }
+    };
+
     return (
         <header className="header-container">
             <nav className="navbar">
-                {/* Botão de menu "hambúrguer" para telas menores */}
                 <button className="menu-toggle" onClick={toggleMobileMenu} aria-label="Abrir menu">
                     <FontAwesomeIcon icon={faBars} />
                 </button>
 
-                {/* Logo principal ou link para a Home */}
-                <div className="navbar-left">
+               <div className="navbar-left">
                     <a href="/" className="nav-logo">Mural de Estágios</a>
                 </div>
 
-                {/* Links de navegação para desktop */}
-                <div className="navbar-links">
+               <div className="navbar-links">
                     <a href="/vagas" className="nav-link">Vagas</a>
-                    <a href="/documentos" className="nav-link">Documentos</a>
+                    <div className="dropdown">
+                        <span className="nav-link">
+                            Documentos <span className="arrow-down">▼</span>
+                        </span>
+                        <div className="dropdown-content">
+                            {documentos && documentos.map(doc => (
+                                <a 
+                                    key={doc} 
+                                    href={doc === "Estágio Obrigatório" ? "/documentos-obrigatorios" : "/documentos-nao-obrigatorios"}
+                                >
+                                    {doc}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                  
+
                     <a href="/curriculo" className="nav-link">Currículo</a>
                 </div>
-
-                {/* Barra de Pesquisa */}
-                <div className="search-bar">
-                    <input type="text" placeholder="Pesquisar" />
+                <form className="search-bar" onSubmit={handleSearchSubmit}>
+                    <input
+                        type="text"
+                        placeholder="Pesquisar"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                     <button type="submit" aria-label="Pesquisar">
                         <FontAwesomeIcon icon={faSearch} />
                     </button>
-                </div>
+                </form>
             </nav>
         </header>
     );

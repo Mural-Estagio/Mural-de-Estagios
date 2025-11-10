@@ -17,6 +17,7 @@ const homeImages = Object.values(imageModules).map(mod => mod.default);
  * quando a seção se torna visível na tela.
  */
 const AnimatedSection = ({ children, className }) => {
+    // ... (Código do AnimatedSection sem alteração) ...
     const sectionRef = useRef(null);
 
     useEffect(() => {
@@ -53,12 +54,12 @@ const AnimatedSection = ({ children, className }) => {
     );
 };
 
-const HomePage = () => {
-    const courses = [
-        "Análise e Desenvolvimento de Sistemas", "Desenvolvimento de Software Multiplataforma",
-        "Comércio Exterior", "Gestão de Recursos Humanos", "Gestão Empresarial",
-        "Polímeros", "Logística", "Desenvolvimento de Produtos Plásticos"
-    ];
+// Recebe 'cursos' como prop vindo do App.jsx
+const HomePage = ({ cursos }) => {
+    
+    // Lista estática removida
+    // const courses = [ ... ];
+
     return (
         <div className="homepage-container">
             {/* --- Seção Hero --- */}
@@ -89,17 +90,19 @@ const HomePage = () => {
                 </div>
             </AnimatedSection>
 
-            {/* --- Seção de Cards de Cursos  --- */}
+            {/* --- Seção de Cards de Cursos (AGORA DINÂMICA) --- */}
             <AnimatedSection className="courses-section">
                 <div className="section-container">
                     <div className="course-cards-grid">
-                        {courses.map(course => (
+                        {/* Mapeia a prop 'cursos' (lista de objetos) */}
+                        {cursos && cursos.map(curso => (
                             <a
-                                href={`/vagas?curso=${encodeURIComponent(course)}`} // Link para a página de vagas com filtro de curso
-                                key={course}
+                                // Usa o nomeCompleto para o filtro e a sigla (ou id) para a key
+                                href={`/vagas?curso=${encodeURIComponent(curso.nomeCompleto)}`} 
+                                key={curso.id || curso.sigla}
                                 className="course-card"
                             >
-                                <h3>{course}</h3>
+                                <h3>{curso.nomeCompleto}</h3>
                                 <span>Vagas <FontAwesomeIcon icon={faArrowRight} /></span>
                             </a>
                         ))}
@@ -109,6 +112,7 @@ const HomePage = () => {
 
             {/* --- Seção "Por que a Fatec ZL?" --- */}
             <AnimatedSection className="why-fatec-section">
+                {/* ... (Restante da página sem alterações) ... */}
                 <div className="section-container">
                     <h2 className="section-title">Por que a Fatec ZL?</h2>
                     <p className="section-description">
