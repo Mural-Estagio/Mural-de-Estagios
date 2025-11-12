@@ -12,9 +12,10 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Função de login com a API
+    // Função de login com a API (Atualizada)
     const handleLogin = async (e) => {
         e.preventDefault();
+        setError(''); // Limpa erros antigos
 
         try {
             const response = await api.post('/auth/login', {
@@ -22,13 +23,21 @@ const LoginPage = () => {
                 password,
             });
 
-            if (response.status === 200) {
+            // O backend agora retorna { token: "..." }
+            if (response.data && response.data.token) {
+                // Salva o token no localStorage
+                localStorage.setItem('authToken', response.data.token);
+                
+                // Limpa o erro e navega para o painel de admin
                 setError('');
                 navigate('/admin/cadastrar');
+            } else {
+                 setError('Resposta inesperada do servidor.');
             }
+
         } catch (error) {
             if (error.response && error.response.status === 401) {
-                setError('Usuário ou senha inválidos ou conta inativa.');
+                setError('Usuário ou senha inválidos.');
             } else {
                 setError('Erro ao conectar com o servidor. Tente novamente.');
             }

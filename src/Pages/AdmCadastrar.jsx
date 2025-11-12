@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTimes, faUpload } from '@fortawesome/free-solid-svg-icons'; // faUpload adicionado
+import { faPlus, faTimes, faUpload, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/AdmCadastrar.css';
 import { api } from '../Service/api';
+
+// Novos imports
+import DashboardStats from '../Components/DashboardStats';
+import ListaVagasAdmin from '../Components/ListaVagasAdmin';
+
 
 // --- MODAL COMPONENT ---
 const Modal = ({ children, isOpen, onClose }) => {
@@ -20,7 +25,7 @@ const Modal = ({ children, isOpen, onClose }) => {
 };
 
 
-// --- FORMULÁRIO DE CURSO (NOVO) ---
+// --- FORMULÁRIO DE CURSO (Sem alterações) ---
 const FormularioCurso = ({ onClose }) => {
     const [cursos, setCursos] = useState([]);
     const [nomeCompleto, setNomeCompleto] = useState('');
@@ -86,9 +91,13 @@ const FormularioCurso = ({ onClose }) => {
 };
 
 
-// --- FORMULÁRIO DE VAGA (MODIFICADO) ---
-const FormularioVaga = ({ onClose }) => {
-    const [formData, setFormData] = useState({
+// --- FORMULÁRIO DE VAGA (MODIFICADO PARA EDIÇÃO) ---
+const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
+    
+    // Verifica se está em modo de edição
+    const isEditMode = vagaParaEditar != null;
+
+    const estadoInicialForm = {
         empresa: '',
         titulo: '',
         remuneracao: '',
@@ -102,11 +111,12 @@ const FormularioVaga = ({ onClose }) => {
         responsabilidades: '',
         dataPublicacao: new Date().toISOString().split('T')[0],
         statusVaga: 'ABERTO',
-    });
+    };
 
+    const [formData, setFormData] = useState(estadoInicialForm);
     const [cursosDisponiveis, setCursosDisponiveis] = useState({});
     const [cursosSelecionados, setCursosSelecionados] = useState([]);
-    const [file, setFile] = useState(null); // Estado para o arquivo
+    const [file, setFile] = useState(null);
     const [error, setError] = useState('');
 
     // Buscar cursos da API
@@ -121,6 +131,32 @@ const FormularioVaga = ({ onClose }) => {
             })
             .catch(err => console.error("Erro ao buscar cursos", err));
     }, []);
+
+    // Efeito para preencher o formulário se estiver em modo de edição
+    useEffect(() => {
+        if (isEditMode) {
+            setFormData({
+                ...vagaParaEditar,
+                // Converte arrays de volta para strings separadas por vírgula
+                beneficios: vagaParaEditar.beneficios?.join(', ') || '',
+                requisitos: vagaParaEditar.requisitos?.join(', ') || '',
+                diferenciais: vagaParaEditar.diferenciais?.join(', ') || '',
+                responsabilidades: vagaParaEditar.responsabilidades?.join(', ') || '',
+                // Garante que a data esteja no formato YYYY-MM-DD
+                dataPublicacao: vagaParaEditar.dataPublicacao ? new Date(vagaParaEditar.dataPublicacao).toISOString().split('T')[0] : '',
+            });
+            setCursosSelecionados(vagaParaEditar.cursosAlvo || []);
+            setFile(null); // Reseta o arquivo ao abrir o modal
+            setError('');
+        } else {
+            // Reseta o form se não for modo de edição (ex: abriu para editar, fechou, abriu para criar)
+            setFormData(estadoInicialForm);
+            setCursosSelecionados([]);
+            setFile(null);
+            setError('');
+        }
+    }, [vagaParaEditar, isEditMode]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -147,6 +183,7 @@ const FormularioVaga = ({ onClose }) => {
             return;
         }
 
+        // Prepara o DTO (objeto JSON)
         const vagaDTO = {
             ...formData,
             beneficios: formData.beneficios.split(',').map(s => s.trim()).filter(Boolean),
@@ -156,36 +193,46 @@ const FormularioVaga = ({ onClose }) => {
             cursosAlvo: cursosSelecionados,
         };
 
-        // Criar FormData para enviar JSON + Arquivo
-        const formDataToSend = new FormData();
-        formDataToSend.append('vagaDTO', JSON.stringify(vagaDTO));
-        
-        if (file) {
-            formDataToSend.append('file', file);
-        }
-
         try {
-            const response = await api.post('/vagas', formDataToSend, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Header é definido automaticamente pelo axios com FormData
-                },
-            });
-
-            if (!response || !response.data) {
-                throw new Error('Resposta inválida do servidor.');
+            if (isEditMode) {
+                // Modo Edição (PUT) - Envia apenas JSON
+                // O endpoint PUT não foi projetado para multipart/form-data
+                // A atualização de arquivo (folder) não é suportada nesta ação.
+                // O VagaService.updateVagaFields já ignora campos nulos/em branco
+                
+                // Remove o folderUrl para não tentar sobrescrevê-lo com um valor antigo
+                delete vagaDTO.folderUrl; 
+                
+                await api.put(`/vagas/${vagaParaEditar.id}`, vagaDTO);
+                alert('✅ Vaga atualizada com sucesso!');
+                
+            } else {
+                // Modo Criação (POST) - Envia FormData (JSON + Arquivo)
+                const formDataToSend = new FormData();
+                formDataToSend.append('vagaDTO', JSON.stringify(vagaDTO));
+                if (file) {
+                    formDataToSend.append('file', file);
+                }
+                
+                await api.post('/vagas', formDataToSend, {
+                     headers: {
+                        // O Axios define o 'Content-Type' como 'multipart/form-data' automaticamente
+                     },
+                });
+                alert('✅ Vaga cadastrada com sucesso!');
             }
+            
+            onSuccess(); // Chama a função de refresh e fecha o modal
 
-            alert('✅ Vaga cadastrada com sucesso!');
-            onClose();
         } catch (err) {
-            console.error('Erro ao cadastrar vaga:', err);
-            setError(err.response?.data?.message || err.message || 'Erro inesperado ao cadastrar vaga.');
+            console.error('Erro ao salvar vaga:', err);
+            setError(err.response?.data?.message || err.message || 'Erro inesperado ao salvar vaga.');
         }
     };
 
     return (
         <form className="admin-form" onSubmit={handleSubmit}>
-            <h2>Cadastrar Nova Vaga</h2>
+            <h2>{isEditMode ? 'Editar Vaga' : 'Cadastrar Nova Vaga'}</h2>
             {error && <p className="error-message">{error}</p>}
             
             <div className="form-fields">
@@ -225,20 +272,25 @@ const FormularioVaga = ({ onClose }) => {
                 <textarea name="responsabilidades" value={formData.responsabilidades} onChange={handleChange} rows="4"></textarea>
             </label>
 
-            {/* CAMPO DE UPLOAD DE ARQUIVO */}
-            <label>Folder (Opcional)
-                <div className="upload-area" onClick={() => document.getElementById('file-upload').click()}>
-                    <input type="file" id="file-upload" onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx" />
-                    {file ? (
-                        <span>Arquivo selecionado: {file.name}</span>
-                    ) : (
-                        <>
-                            <FontAwesomeIcon icon={faUpload} />
-                            <span>Clique para adicionar um folder (PDF, DOCX)</span>
-                        </>
-                    )}
-                </div>
-            </label>
+            {/* Oculta o upload se estiver editando, pois o endpoint PUT não suporta */}
+            {!isEditMode && (
+                <label>Folder (Opcional)
+                    <div className="upload-area" onClick={() => document.getElementById('file-upload').click()}>
+                        <input type="file" id="file-upload" onChange={handleFileChange} style={{ display: 'none' }} accept=".pdf,.doc,.docx" />
+                        {file ? (
+                            <span>Arquivo selecionado: {file.name}</span>
+                        ) : (
+                            <>
+                                <FontAwesomeIcon icon={faUpload} />
+                                <span>Clique para adicionar um folder (PDF, DOCX)</span>
+                            </>
+                        )}
+                    </div>
+                </label>
+            )}
+            {isEditMode && (
+                <p className="form-info-message">A edição do arquivo anexo (folder) não é suportada. Para alterar o anexo, é necessário apagar e cadastrar a vaga novamente.</p>
+            )}
 
 
             <div className="form-group-cursos">
@@ -246,13 +298,21 @@ const FormularioVaga = ({ onClose }) => {
                 <div className="cursos-checkbox-container">
                     {Object.entries(cursosDisponiveis).map(([fullName, sigla]) => (
                         <label key={sigla} className="curso-checkbox">
-                            <input type="checkbox" value={sigla} onChange={handleCursoChange} /> {fullName}
+                            <input 
+                                type="checkbox" 
+                                value={sigla} 
+                                // Marca os checkboxes com base no estado
+                                checked={cursosSelecionados.includes(sigla)}
+                                onChange={handleCursoChange} 
+                            /> {fullName}
                         </label>
                     ))}
                 </div>
             </div>
 
-            <button type="submit" className="submit-button">CADASTRAR VAGA</button>
+            <button type="submit" className="submit-button">
+                 {isEditMode ? 'ATUALIZAR VAGA' : 'CADASTRAR VAGA'}
+            </button>
         </form>
     );
 };
@@ -262,23 +322,97 @@ const FormularioVaga = ({ onClose }) => {
 const AdmCadastrar = () => {
     const [isVagaModalOpen, setIsVagaModalOpen] = useState(false);
     const [isCursoModalOpen, setIsCursoModalOpen] = useState(false);
+    
+    // Estado para guardar os dados do dashboard
+    const [vagas, setVagas] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
+    // Estado para controlar a edição
+    const [vagaParaEditar, setVagaParaEditar] = useState(null); 
+
+    // Função para buscar todas as vagas
+    const fetchVagas = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get('/vagas');
+            // Ordena as vagas da mais nova para a mais antiga
+            const vagasOrdenadas = response.data.sort((a, b) => new Date(b.dataPublicacao) - new Date(a.dataPublicacao));
+            setVagas(vagasOrdenadas);
+            setError(null);
+        } catch (err) {
+            setError('Erro ao carregar vagas.');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Buscar vagas quando o componente montar
+    useEffect(() => {
+        fetchVagas();
+    }, []);
+
+    // Função de callback para atualizar a lista após criar/editar/deletar
+    const handleSuccess = () => {
+        fetchVagas(); // Re-busca os dados
+        handleCloseModal(); // Fecha o modal e limpa o estado de edição
+    };
+    
+    // Abre o modal para edição
+    const handleEditClick = (vaga) => {
+        setVagaParaEditar(vaga);
+        setIsVagaModalOpen(true);
+    };
+
+    // Abre o modal para criar (limpando o estado de edição)
+    const handleCreateClick = () => {
+        setVagaParaEditar(null);
+        setIsVagaModalOpen(true);
+    };
+
+    // Fecha o modal e limpa a vaga em edição
+    const handleCloseModal = () => {
+        setIsVagaModalOpen(false);
+        setVagaParaEditar(null);
+    };
+
 
     return (
         <div className="admin-page">
-            <h1 className="admin-title">PAINEL DE CADASTRO</h1>
+            <h1 className="admin-title">PAINEL DE CONTROLE</h1>
+            
+            <DashboardStats vagas={vagas} loading={loading} />
+
             <div className="admin-actions">
-                <button className="action-button" onClick={() => setIsVagaModalOpen(true)}>
+                <button className="action-button" onClick={handleCreateClick}>
                     <FontAwesomeIcon icon={faPlus} /> NOVA VAGA
                 </button>
                 <button className="action-button" onClick={() => setIsCursoModalOpen(true)}>
                     <FontAwesomeIcon icon={faPlus} /> GERENCIAR CURSOS
                 </button>
             </div>
+            
+            {loading && <p>Carregando lista de vagas...</p>}
+            {error && <p className="error-message">{error}</p>}
+            {!loading && !error && (
+                <ListaVagasAdmin 
+                    vagas={vagas} 
+                    onSuccessRefresh={handleSuccess} 
+                    onEdit={handleEditClick}
+                />
+            )}
 
-            <Modal isOpen={isVagaModalOpen} onClose={() => setIsVagaModalOpen(false)}>
-                <FormularioVaga onClose={() => setIsVagaModalOpen(false)} />
+            {/* Modal de Vaga (agora reutilizável para criar/editar) */}
+            <Modal isOpen={isVagaModalOpen} onClose={handleCloseModal}>
+                <FormularioVaga 
+                    onClose={handleCloseModal} 
+                    onSuccess={handleSuccess}
+                    vagaParaEditar={vagaParaEditar}
+                />
             </Modal>
 
+            {/* Modal de Curso */}
             <Modal isOpen={isCursoModalOpen} onClose={() => setIsCursoModalOpen(false)}>
                 <FormularioCurso onClose={() => setIsCursoModalOpen(false)} />
             </Modal>

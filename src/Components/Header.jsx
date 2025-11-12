@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Adicionado faSignOutAlt
 
 const Header = ({ toggleMobileMenu, documentos }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // Verifica se o usuário está logado ao carregar o header
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        setIsLoggedIn(!!token); // !! converte a string (ou null) para boolean
+    }, []);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -14,6 +21,12 @@ const Header = ({ toggleMobileMenu, documentos }) => {
             navigate('/vagas', { state: { headerSearch: searchTerm } });
             setSearchTerm(''); 
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken'); // Remove o token
+        setIsLoggedIn(false); // Atualiza o estado
+        navigate('/'); // Envia para a página inicial
     };
 
     return (
@@ -48,17 +61,28 @@ const Header = ({ toggleMobileMenu, documentos }) => {
 
                     <a href="/curriculo" className="nav-link">Currículo</a>
                 </div>
-                <form className="search-bar" onSubmit={handleSearchSubmit}>
-                    <input
-                        type="text"
-                        placeholder="Pesquisar"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <button type="submit" aria-label="Pesquisar">
-                        <FontAwesomeIcon icon={faSearch} />
-                    </button>
-                </form>
+
+                <div className="navbar-right-controls">
+                    <form className="search-bar" onSubmit={handleSearchSubmit}>
+                        <input
+                            type="text"
+                            placeholder="Pesquisar"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <button type="submit" aria-label="Pesquisar">
+                            <FontAwesomeIcon icon={faSearch} />
+                        </button>
+                    </form>
+
+                    {/* Botão de Logout Condicional */}
+                    {isLoggedIn && (
+                        <button className="logout-button" onClick={handleLogout} title="Sair">
+                            <FontAwesomeIcon icon={faSignOutAlt} />
+                            <span>Sair</span>
+                        </button>
+                    )}
+                </div>
             </nav>
         </header>
     );

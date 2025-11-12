@@ -20,7 +20,7 @@
     justify-content: center;
     gap: 20px;
     margin-bottom: 40px;
-    flex-wrap: wrap; /* Adicionado para responsividade */
+    flex-wrap: wrap; 
 }
 
 .action-button {
@@ -56,7 +56,7 @@
     align-items: center;
     z-index: 2000;
     animation: fadeIn 0.3s ease-out;
-    padding: 20px; /* Adicionado para não cortar em telas pequenas */
+    padding: 20px; 
 }
 
 .modal-content {
@@ -101,13 +101,12 @@
 
 .form-fields {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Alterado para 2 colunas */
-    gap: 20px; /* Aumentado o gap */
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; 
     text-align: left;
-    margin-bottom: 20px; /* Aumentada margem */
+    margin-bottom: 20px; 
 }
 
-/* Faz campos de texto ocuparem a largura total */
 .admin-form label {
     font-weight: bold;
     color: #555;
@@ -119,7 +118,8 @@
 /* Campos que devem ocupar 2 colunas */
 .admin-form label:has(textarea),
 .admin-form label:has(.upload-area),
-.admin-form .form-group-cursos {
+.admin-form .form-group-cursos,
+.admin-form .form-info-message {
     grid-column: 1 / -1;
 }
 
@@ -128,22 +128,35 @@
 .admin-form input[type="url"],
 .admin-form input[type="date"],
 .admin-form input[type="time"],
-.admin-form select, /* Adicionado select */
+.admin-form select,
 .admin-form textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
-    font-family: Arial, sans-serif; /* Consistência de fonte */
+    font-family: Arial, sans-serif; 
 }
 
 .admin-form textarea {
     resize: vertical;
-    min-height: 80px; /* Altura mínima */
+    min-height: 80px; 
 }
 
-/* --- ÁREA DE UPLOAD (NOVO) --- */
+/* Mensagem de info no form de edição */
+.form-info-message {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #555;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* --- ÁREA DE UPLOAD --- */
 .upload-area {
     border: 2px dashed #ddd;
     border-radius: 8px;
@@ -192,7 +205,7 @@
     transform: scale(1.02);
 }
 
-/* --- GRUPO DE CURSOS (MODIFICADO) --- */
+/* --- GRUPO DE CURSOS --- */
 .form-group-cursos {
     text-align: left;
     margin: 20px 0;
@@ -220,7 +233,7 @@
     gap: 8px;
     font-weight: normal;
     color: #555;
-    margin-bottom: 0; /* Reset */
+    margin-bottom: 0; 
 }
 .curso-checkbox input {
     width: 16px;
@@ -228,7 +241,7 @@
     accent-color: var(--primary-color);
 }
 
-/* --- LISTA DE CURSOS (NOVO) --- */
+/* --- LISTA DE CURSOS (NO MODAL) --- */
 .curso-list { 
     list-style: none; 
     padding: 0; 
@@ -282,7 +295,7 @@
 /* Responsividade do Formulário */
 @media (max-width: 600px) {
     .form-fields {
-        grid-template-columns: 1fr; /* Coluna única em telas pequenas */
+        grid-template-columns: 1fr; 
     }
     .modal-content {
         padding: 20px;
