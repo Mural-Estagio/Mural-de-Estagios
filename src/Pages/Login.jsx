@@ -12,23 +12,17 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Função de login com a API (Atualizada)
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(''); // Limpa erros antigos
+        setError(''); 
 
         try {
             const response = await api.post('/auth/login', {
                 username,
                 password,
             });
-
-            // O backend agora retorna { token: "..." }
             if (response.data && response.data.token) {
-                // Salva o token no localStorage
                 localStorage.setItem('authToken', response.data.token);
-                
-                // Limpa o erro e navega para o painel de admin
                 setError('');
                 navigate('/admin/cadastrar');
             } else {

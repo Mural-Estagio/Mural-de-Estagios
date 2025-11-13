@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Adicionado faSignOutAlt
+import { faSearch, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; 
 
 const Header = ({ toggleMobileMenu, documentos }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    // Verifica se o usuário está logado ao carregar o header
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        setIsLoggedIn(!!token); // !! converte a string (ou null) para boolean
+        setIsLoggedIn(!!token); 
     }, []);
 
     const handleSearchSubmit = (e) => {
@@ -24,9 +22,9 @@ const Header = ({ toggleMobileMenu, documentos }) => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('authToken'); // Remove o token
-        setIsLoggedIn(false); // Atualiza o estado
-        navigate('/'); // Envia para a página inicial
+        localStorage.removeItem('authToken'); 
+        setIsLoggedIn(false); 
+        navigate('/'); 
     };
 
     return (

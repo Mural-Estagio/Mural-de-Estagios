@@ -1,0 +1,90 @@
+.dashboard-graphs-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.graph-widget {
+    background-color: var(--background-card);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow-sm);
+}
+
+.graph-widget h3 {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 10px;
+}
+
+.bar-chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px; 
+}
+
+.bar-chart-container::-webkit-scrollbar { width: 6px; }
+.bar-chart-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+.bar-chart-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.bar-chart-container::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bar-label {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 0 120px; 
+}
+
+.bar-wrapper {
+    flex-grow: 1;
+    background-color: #f1f3f5;
+    border-radius: 4px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+    text-align: right;
+    padding-right: 5px; 
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    line-height: 20px;
+    min-width: 25px; 
+}
+
+.bar-item:nth-child(2n) .bar-fill {
+    background-color: #007bff; 
+}
+
+.bar-item:nth-child(3n) .bar-fill {
+    background-color: #008744; 
+}
+
+.graph-widget p {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 10px;
+}

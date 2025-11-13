@@ -6,13 +6,10 @@ import {
     faCalendarAlt, faPrint, faMoneyBillWave,
     faClock, faMapMarkerAlt, faBriefcase, faBuilding, faListCheck,
     faStar, faAward, faUsers, faExternalLinkAlt, faArrowLeft,
-    faFileDownload // <-- ÍCONE ADICIONADO
+    faFileDownload 
 } from '@fortawesome/free-solid-svg-icons';
 import { api } from '../Service/api';
 import { QRCodeCanvas } from 'qrcode.react';
-
-// --- MAPA DE CURSOS (SERÁ CARREGADO DA API) ---
-// const cursoMap = { ... }; // REMOVIDO
 
 const VagaDetalhada = () => {
     const { vagaId } = useParams();
@@ -20,19 +17,18 @@ const VagaDetalhada = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentUrl, setCurrentUrl] = useState('');
-    const [cursoMap, setCursoMap] = useState({}); // NOVO ESTADO
+    const [cursoMap, setCursoMap] = useState({}); 
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setCurrentUrl(window.location.href);
         }
 
-        // --- Buscar cursos da API ---
         const fetchCursos = async () => {
             try {
                 const response = await api.get('/cursos');
                 const map = response.data.reduce((acc, curso) => {
-                    acc[curso.sigla] = curso.nomeCompleto; // [SIGLA] -> Nome Completo
+                    acc[curso.sigla] = curso.nomeCompleto; 
                     return acc;
                 }, {});
                 setCursoMap(map);
@@ -44,7 +40,6 @@ const VagaDetalhada = () => {
         const fetchVagaDetalhada = async () => {
             setLoading(true);
             try {
-                // Faz a requisição usando axios
                 const response = await api.get(`/vagas/${vagaId}`);
 
                 if (!response.data) {
@@ -60,7 +55,7 @@ const VagaDetalhada = () => {
             }
         };
 
-        fetchCursos(); // Chama a busca de cursos
+        fetchCursos(); 
         fetchVagaDetalhada();
     }, [vagaId]);
 
@@ -169,28 +164,25 @@ const VagaDetalhada = () => {
                     </div>
                 )}
 
-                {/* --- [NOVA SEÇÃO] DOCUMENTO ANEXO (FOLDER) --- */}
+                {/* --- DOCUMENTO ANEXO (FOLDER) --- */}
                 {vaga.folderUrl && (
                     <div className="vaga-secao no-print">
                         <h3><FontAwesomeIcon icon={faFileDownload} /> Documento Anexo</h3>
                         <p>A empresa disponibilizou um documento com mais detalhes sobre a vaga. Clique no botão abaixo para visualizá-lo.</p>
-                        {/* NOTA: Este link aponta para vaga.folderUrl. No backend, ainda precisamos
-                            implementar a lógica para servir o arquivo estático desse diretório.
-                            Por enquanto, o link é gerado (ex: /uploads/vagas/Nome_Empresa_arquivo.pdf)
-                        */}
+
                         <a 
                             href={vaga.folderUrl} 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="ir-para-vaga-btn primary"
-                            style={{maxWidth: '300px', margin: '10px auto 0 auto'}} // Estilo inline para centralizar e limitar
+                            style={{maxWidth: '300px', margin: '10px auto 0 auto'}} 
                         >
                             <FontAwesomeIcon icon={faFileDownload} /> Baixar Anexo
                         </a>
                     </div>
                 )}
 
-                {/* --- Cursos Alvo (agora dinâmico) --- */}
+                {/* --- Cursos Alvo  --- */}
                 {vaga.cursosAlvo?.length > 0 && (
                     <div className="vaga-secao print-only">
                         <h3>Cursos Alvo</h3>

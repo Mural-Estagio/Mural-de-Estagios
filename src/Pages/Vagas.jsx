@@ -7,8 +7,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css'; 
 import { api } from '../Service/api';
-
-// ... (Componente JobCard permanece o mesmo) ...
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
 
@@ -118,30 +116,25 @@ const habilidadesFiltro = [
     'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'
 ];
 
-// --- COMPONENTE PRINCIPAL ---
 const Vagas = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const cursoSelecionado = queryParams.get("curso");
-    const headerSearchTerm = location.state?.headerSearch; // <-- Pega o termo vindo do Header
-
-    const [vagas, setVagas] = useState([]);
-    const [filteredVagas, setFilteredVagas] = useState([]);
+    const headerSearchTerm = location.state?.headerSearch; 
+    const [vagas, setVagas] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [cursoMap, setCursoMap] = useState({});
     const [cursosFiltro, setCursosFiltro] = useState([]);
 
     const [filters, setFilters] = useState({
-        searchTerm: headerSearchTerm || '', // <-- Define o valor inicial do filtro
+        searchTerm: headerSearchTerm || '', 
         shift: { manha: false, tarde: false, noite: false },
         modelo: { presencial: false, hibrido: false, home_office: false },
         courses: cursoSelecionado ? [cursoSelecionado] : [],
-        skills: []
+        skills: [] 
     });
 
-    // ... (useEffect de buscar cursos permanece o mesmo) ...
     useEffect(() => {
         const fetchCursos = async () => {
             try {
@@ -150,7 +143,7 @@ const Vagas = () => {
                 const map = {};
                 const filtro = [];
                 cursos.forEach(curso => {
-                    map[curso.nomeCompleto] = curso.sigla; // [Nome Completo] -> SIGLA
+                    map[curso.nomeCompleto] = curso.sigla; 
                     filtro.push(curso.nomeCompleto);
                 });
                 setCursoMap(map);
@@ -162,84 +155,56 @@ const Vagas = () => {
         fetchCursos();
     }, []);
 
-
-    // ... (useEffect de buscar vagas permanece o mesmo) ...
     useEffect(() => {
-        const fetchVagas = async () => {
+        if (cursosFiltro.length === 0 && cursoSelecionado) {
+            return;
+        }
+
+        const fetchVagasFiltradas = async () => {
             setLoading(true);
             setError(null);
+            const params = {
+                termo: filters.searchTerm.trim() || null,
+                cursos: filters.courses.map(fullName => cursoMap[fullName]).filter(Boolean),
+                modelos: Object.keys(filters.modelo)
+                    .filter(k => filters.modelo[k])
+                    .map(m => m.toUpperCase()), 
+                
+                periodos: Object.keys(filters.shift)
+                    .filter(k => filters.shift[k])
+            };
+           
+            if (params.cursos.length === 0) delete params.cursos;
+            if (params.modelos.length === 0) delete params.modelos;
+            if (params.periodos.length === 0) delete params.periodos;
+
             try {
-                const response = await api.get('/vagas');
+                const response = await api.get('/vagas', { params });
                 if (!response.data) throw new Error('Nenhuma vaga encontrada');
-                setVagas(response.data);
+                let vagasFiltradas = response.data;
+                const { skills } = filters;
+                if (skills.length > 0) {
+                     vagasFiltradas = vagasFiltradas.filter(vaga =>
+                        skills.every(skill =>
+                            vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
+                            vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
+                        )
+                    );
+                }
+                
+                setVagas(vagasFiltradas);
+
             } catch (error) {
-                console.error("Erro ao buscar vagas:", error);
+                console.error("Erro ao buscar vagas filtradas:", error);
                 setError(error.response?.data?.message || error.message || 'Erro ao carregar vagas');
             } finally {
                 setLoading(false);
             }
         };
-        fetchVagas();
-    }, []);
 
-    // ... (useEffect de aplicar filtros permanece o mesmo) ...
-    useEffect(() => {
-        // Aguarda o cursoMap carregar se um curso foi selecionado via URL
-        if (cursosFiltro.length === 0 && cursoSelecionado) {
-            return;
-        }
-
-        let vagasParaFiltrar = [...vagas];
-
-        if (filters.searchTerm.trim()) {
-            const termo = filters.searchTerm.toLowerCase();
-            vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
-                vaga.titulo?.toLowerCase().includes(termo) ||
-                vaga.empresa?.toLowerCase().includes(termo) ||
-                vaga.requisitos?.some(r => r.toLowerCase().includes(termo)) ||
-                vaga.responsabilidades?.some(r => r.toLowerCase().includes(termo)) ||
-                vaga.diferenciais?.some(d => d.toLowerCase().includes(termo))
-            );
-        }
-
-        // Filtro por curso
-        if (filters.courses.length > 0) {
-            const cursosSiglas = filters.courses.map(fullName => cursoMap[fullName]).filter(Boolean);
-            vagasParaFiltrar = vagasParaFiltrar.filter(vaga =>
-                vaga.cursosAlvo?.some(cursoApi => cursosSiglas.includes(cursoApi))
-            );
-        }
-
-        // Filtro por turno, habilidades e MODALIDADE
-        vagasParaFiltrar = vagasParaFiltrar.filter(vaga => {
-            const { shift, skills, modelo } = filters;
-
-            const shiftMatch =
-                (!shift.manha && !shift.tarde && !shift.noite) ||
-                (shift.manha && vaga.periodo?.toLowerCase().includes('manhã')) ||
-                (shift.tarde && vaga.periodo?.toLowerCase().includes('tarde')) ||
-                (shift.noite && vaga.periodo?.toLowerCase().includes('noite'));
-
-            const skillsMatch =
-                skills.length === 0 ||
-                skills.every(skill =>
-                    vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
-                    vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
-                );
-            
-            // LÓGICA DO FILTRO DE MODALIDADE
-            const modeloMatch =
-                (!modelo.presencial && !modelo.hibrido && !modelo.home_office) ||
-                (modelo.presencial && vaga.modelo === 'PRESENCIAL') ||
-                (modelo.hibrido && vaga.modelo === 'HIBRIDO') ||
-                (modelo.home_office && vaga.modelo === 'HOME_OFFICE');
-
-            return shiftMatch && skillsMatch && modeloMatch;
-        });
-
-        setFilteredVagas(vagasParaFiltrar);
-    }, [vagas, filters, cursoMap, cursosFiltro.length, cursoSelecionado]);
-
+        fetchVagasFiltradas();
+        
+    }, [filters, cursoMap, cursosFiltro.length, cursoSelecionado]); 
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -281,12 +246,11 @@ const Vagas = () => {
                             name="searchTerm"
                             placeholder="Buscar por cargo, empresa ou skill..."
                             className="search-input"
-                            value={filters.searchTerm} // O valor agora reflete o estado
+                            value={filters.searchTerm} 
                             onChange={handleInputChange}
                         />
                     </div>
 
-                    {/* ... (outros filtros permanecem iguais) ... */}
                     <div className="filter-group">
                         <h4>Turno</h4>
                         <div className="checkbox-group">
@@ -344,8 +308,8 @@ const Vagas = () => {
                 <main className="job-listings">
                     {loading && <p className="loading-message">Carregando vagas...</p>}
                     {error && <p className="no-results error-message">Erro ao carregar vagas: {error}</p>}
-                    {!loading && !error && filteredVagas.length > 0 ? (
-                        filteredVagas.map(vaga => <JobCard key={vaga.id} vaga={vaga} />)
+                    {!loading && !error && vagas.length > 0 ? (
+                        vagas.map(vaga => <JobCard key={vaga.id} vaga={vaga} />)
                     ) : (
                         !loading && !error && <p className="no-results">Nenhuma vaga encontrada com os filtros selecionados.</p>
                     )}

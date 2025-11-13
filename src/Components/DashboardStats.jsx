@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBriefcase, faBuilding, faLaptopCode, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBriefcase, faCheckCircle, faTimesCircle, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/DashboardStats.css'; 
 
 const DashboardStats = ({ vagas, loading }) => {
@@ -9,34 +9,53 @@ const DashboardStats = ({ vagas, loading }) => {
     }
 
     const totalVagas = vagas.length;
-    
-    const modalidades = {
-        PRESENCIAL: 0,
-        HIBRIDO: 0,
-        HOME_OFFICE: 0
+    const vagasAtivas = vagas.filter(v => v.statusVaga === 'ABERTO').length;
+    const vagasInativas = totalVagas - vagasAtivas;
+    const getVagasUltimos30Dias = () => {
+        const today = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(today.getDate() - 30);
+
+        return vagas.filter(vaga => {
+            const dataPublicacao = new Date(vaga.dataPublicacao);
+            return dataPublicacao >= thirtyDaysAgo && dataPublicacao <= today;
+        }).length;
     };
 
-    const vagasAtivas = vagas.filter(v => v.statusVaga === 'ABERTO').length;
-
-
-    vagas.forEach(vaga => {
-        if (vaga.modelo && modalidades.hasOwnProperty(vaga.modelo)) {
-            modalidades[vaga.modelo]++;
-        }
-    });
+    const vagasUltimos30Dias = getVagasUltimos30Dias();
 
     return (
         <section className="stats-container">
-            <StatCard icon={faBriefcase} title="Vagas Ativas" value={vagasAtivas} />
-            <StatCard icon={faMapMarkerAlt} title="Presencial" value={modalidades.PRESENCIAL} />
-            <StatCard icon={faBuilding} title="Híbrido" value={modalidades.HIBRIDO} />
-            <StatCard icon={faLaptopCode} title="Home Office" value={modalidades.HOME_OFFICE} />
+            <StatCard 
+                icon={faBriefcase} 
+                title="Total de Vagas" 
+                value={totalVagas} 
+                className="total"
+            />
+            <StatCard 
+                icon={faCheckCircle} 
+                title="Vagas Ativas" 
+                value={vagasAtivas}
+                className="ativas"
+            />
+            <StatCard 
+                icon={faTimesCircle} 
+                title="Vagas Inativas" 
+                value={vagasInativas}
+                className="inativas"
+            />
+            <StatCard 
+                icon={faCalendarPlus} 
+                title="Novas (Últ. 30 dias)" 
+                value={vagasUltimos30Dias}
+                className="novas"
+            />
         </section>
     );
 };
 
-const StatCard = ({ icon, title, value }) => (
-    <div className="stat-card">
+const StatCard = ({ icon, title, value, className }) => (
+    <div className={`stat-card ${className || ''}`}>
         <FontAwesomeIcon icon={icon} className="stat-icon" />
         <div className="stat-info">
             <span className="stat-value">{value}</span>

@@ -13,8 +13,6 @@ import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
 import { api } from "./Service/api.js"; 
 import "./Styles/global.css";
-
-// Importar a Rota Protegida
 import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 
 
@@ -48,7 +46,6 @@ function App() {
         documentos={documentos} 
       >
         <Routes>
-          {/* Rotas Públicas */}
           <Route path="/" element={<HomePage cursos={cursoList} />} /> 
           <Route path="/vagas" element={<Vagas />} />
           <Route path="/vagas/:vagaId" element={<VagaDetalhada />} /> 
@@ -56,14 +53,10 @@ function App() {
           <Route path="/documentos" element={<Documentos />} />
           <Route path="/documentos-obrigatorios" element={<DocumentosObrigatorios />} />
           <Route path="/documentos-nao-obrigatorios" element={<DocumentosNaoObrigatorios />} />
-          
-          {/* Rota de Login (Pública) */}
           <Route path="/admin/Login" element={<LoginPage />} />
-
-          {/* Rota Protegida */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/cadastrar" element={<AdmCadastrar />} />
-            {/* Se você adicionar mais rotas de admin, coloque-as aqui */}
+
           </Route>
 
         </Routes>
