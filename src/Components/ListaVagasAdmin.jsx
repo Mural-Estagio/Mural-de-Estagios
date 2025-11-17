@@ -10,7 +10,7 @@ const ListaVagasAdmin = ({ vagas, onSuccessRefresh, onEdit }) => {
         if (window.confirm('Tem certeza que deseja APAGAR permanentemente esta vaga? Esta ação não pode ser desfeita.')) {
             try {
                 await api.delete(`/vagas/${id}`);
-                onSuccessRefresh(); // Chama a função de refresh (fetchVagas) do pai
+                onSuccessRefresh(); 
             } catch (err) {
                 alert('Erro ao apagar vaga.');
                 console.error(err);
@@ -22,7 +22,7 @@ const ListaVagasAdmin = ({ vagas, onSuccessRefresh, onEdit }) => {
          if (window.confirm('Tem certeza que deseja FECHAR esta vaga? (Ela deixará de ser pública)')) {
             try {
                 await api.patch(`/vagas/${id}`);
-                onSuccessRefresh(); // Reutiliza a função de refresh
+                onSuccessRefresh(); 
             } catch (err) {
                 alert('Erro ao fechar vaga.');
                 console.error(err);

@@ -9,6 +9,7 @@ import Documentos from "./Pages/Documentos.jsx";
 import DocumentosObrigatorios from "./Pages/DocumentosObrigatorios.jsx";
 import DocumentosNaoObrigatorios from "./Pages/DocumentosNaoObrigatorios.jsx";
 import VagaDetalhada from "./Pages/VagaDetalhada.jsx"; 
+import GerenciarVagas from "./Pages/GerenciarVagas.jsx"; 
 import Layout from "./Components/Layout.jsx";
 import MobileMenu from "./Components/MobileMenu.jsx";
 import { api } from "./Service/api.js"; 
@@ -56,8 +57,9 @@ function App() {
           <Route path="/admin/Login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/admin/cadastrar" element={<AdmCadastrar />} />
-
+            <Route path="/admin/gerenciar-vagas" element={<GerenciarVagas />} />
           </Route>
+
 
         </Routes>
       </Layout>

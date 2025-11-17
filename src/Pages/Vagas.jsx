@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react'; 
 import { useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -7,10 +7,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import '../Styles/Vagas.css'; 
 import { api } from '../Service/api';
+
 const JobCard = ({ vaga }) => {
     const [copied, setCopied] = useState(false);
 
     const handleShare = (e) => {
+        e.preventDefault(); 
         e.stopPropagation();
         const link = `${window.location.origin}/vagas/${vaga.id}`;
         navigator.clipboard.writeText(link)
@@ -107,25 +109,24 @@ const JobCard = ({ vaga }) => {
     );
 };
 
-
-const habilidadesFiltro = [
-    'Excel', 'Word', 'PowerPoint', 'Comunicação', 'Organização',
-    'Inglês Básico', 'Inglês Intermediário', 'Inglês Avançado', 'Espanhol',
-    'Programação', 'Java', 'Python', 'SQL', 'React', 'JavaScript',
-    'HTML', 'CSS', 'Node.js', 'API', 'Banco de Dados', 'Git',
-    'Cloud', 'SAP', 'Gestão de Projetos', 'Metodologias Ágeis'
-];
-
 const Vagas = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const cursoSelecionado = queryParams.get("curso");
     const headerSearchTerm = location.state?.headerSearch; 
+    
     const [vagas, setVagas] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [cursoMap, setCursoMap] = useState({});
     const [cursosFiltro, setCursosFiltro] = useState([]);
+
+    const [currentPage, setCurrentPage] = useState(0); 
+    const [totalPages, setTotalPages] = useState(0);
+    const VAGAS_PER_PAGE = 30; 
+    
+    const [dynamicSkillsList, setDynamicSkillsList] = useState([]);
+    const [skillSearchTerm, setSkillSearchTerm] = useState('');
 
     const [filters, setFilters] = useState({
         searchTerm: headerSearchTerm || '', 
@@ -136,10 +137,14 @@ const Vagas = () => {
     });
 
     useEffect(() => {
-        const fetchCursos = async () => {
+        const fetchInitialData = async () => {
             try {
-                const response = await api.get('/cursos');
-                const cursos = response.data;
+                const [cursosRes, habilidadesRes] = await Promise.all([
+                    api.get('/cursos'),
+                    api.get('/habilidades')
+                ]);
+
+                const cursos = cursosRes.data;
                 const map = {};
                 const filtro = [];
                 cursos.forEach(curso => {
@@ -148,30 +153,36 @@ const Vagas = () => {
                 });
                 setCursoMap(map);
                 setCursosFiltro(filtro);
+
+                const sortedSkills = habilidadesRes.data.sort((a, b) => a.nome.localeCompare(b.nome));
+                setDynamicSkillsList(sortedSkills);
+
             } catch (err) {
-                console.error("Erro ao buscar cursos:", err);
+                console.error("Erro ao buscar dados iniciais:", err);
             }
         };
-        fetchCursos();
+        fetchInitialData();
     }, []);
 
     useEffect(() => {
-        if (cursosFiltro.length === 0 && cursoSelecionado) {
+        if (cursosFiltro.length === 0 && cursoSelecionado && Object.keys(cursoMap).length === 0) {
             return;
         }
 
         const fetchVagasFiltradas = async () => {
             setLoading(true);
             setError(null);
+            
             const params = {
                 termo: filters.searchTerm.trim() || null,
                 cursos: filters.courses.map(fullName => cursoMap[fullName]).filter(Boolean),
                 modelos: Object.keys(filters.modelo)
                     .filter(k => filters.modelo[k])
                     .map(m => m.toUpperCase()), 
-                
                 periodos: Object.keys(filters.shift)
-                    .filter(k => filters.shift[k])
+                    .filter(k => filters.shift[k]),
+                page: currentPage,
+                size: VAGAS_PER_PAGE
             };
            
             if (params.cursos.length === 0) delete params.cursos;
@@ -181,7 +192,8 @@ const Vagas = () => {
             try {
                 const response = await api.get('/vagas', { params });
                 if (!response.data) throw new Error('Nenhuma vaga encontrada');
-                let vagasFiltradas = response.data;
+
+                let vagasFiltradas = response.data.content;
                 const { skills } = filters;
                 if (skills.length > 0) {
                      vagasFiltradas = vagasFiltradas.filter(vaga =>
@@ -193,10 +205,13 @@ const Vagas = () => {
                 }
                 
                 setVagas(vagasFiltradas);
+                setTotalPages(response.data.totalPages);
 
             } catch (error) {
                 console.error("Erro ao buscar vagas filtradas:", error);
                 setError(error.response?.data?.message || error.message || 'Erro ao carregar vagas');
+                setVagas([]); 
+                setTotalPages(0);
             } finally {
                 setLoading(false);
             }
@@ -204,10 +219,12 @@ const Vagas = () => {
 
         fetchVagasFiltradas();
         
-    }, [filters, cursoMap, cursosFiltro.length, cursoSelecionado]); 
+    }, [filters, cursoMap, cursosFiltro.length, cursoSelecionado, currentPage]); 
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
+        
+        setCurrentPage(0);
 
         if (type === 'checkbox') {
             if (['manha', 'tarde', 'noite'].includes(name)) {
@@ -221,7 +238,7 @@ const Vagas = () => {
                 setFilters(prev => ({ ...prev, courses: newCourses }));
             } else if (name === 'skill') {
                 const newSkills = checked
-                    ? [...filters.skills, value]
+                    ? [...filters.skills, value] 
                     : filters.skills.filter(item => item !== value);
                 setFilters(prev => ({ ...prev, skills: newSkills }));
             }
@@ -230,6 +247,48 @@ const Vagas = () => {
         }
     };
 
+    const filteredSkillsForDisplay = useMemo(() => {
+        return dynamicSkillsList.filter(skill =>
+            skill.nome.toLowerCase().includes(skillSearchTerm.toLowerCase())
+        );
+    }, [dynamicSkillsList, skillSearchTerm]);
+    const PaginationControls = () => {
+
+        if (totalPages <= 1) return null; 
+        const pages = [];
+        for (let i = 0; i < totalPages; i++) {
+            pages.push(
+                <button
+                    key={i}
+                    onClick={() => setCurrentPage(i)}
+                    className={`page-btn ${i === currentPage ? 'active' : ''}`}
+                    aria-current={i === currentPage}
+                    aria-label={`Ir para página ${i + 1}`}
+                >
+                    {i + 1}
+                </button>
+            );
+        }
+        return (
+            <div className="pagination-container">
+                <button 
+                    onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                    disabled={currentPage === 0}
+                    className="page-btn"
+                >
+                    &lt; Anterior
+                </button>
+                {pages}
+                <button 
+                    onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+                    disabled={currentPage === totalPages - 1}
+                    className="page-btn"
+                >
+                    Próxima &gt;
+                </button>
+            </div>
+        );
+    };
     return (
         <div className="vagas-page">
             <div className="vagas-header">
@@ -238,7 +297,6 @@ const Vagas = () => {
             </div>
 
             <div className="vagas-container">
-                {/* --- Sidebar de Filtros --- */}
                 <aside className="filter-sidebar">
                     <div className="filter-group">
                         <input
@@ -259,7 +317,6 @@ const Vagas = () => {
                             <label><input type="checkbox" name="noite" checked={filters.shift.noite} onChange={handleInputChange} /> Noite</label>
                         </div>
                     </div>
-
                     <div className="filter-group">
                         <h4>Modalidade</h4>
                         <div className="checkbox-group">
@@ -268,7 +325,6 @@ const Vagas = () => {
                             <label><input type="checkbox" name="home_office" checked={filters.modelo.home_office} onChange={handleInputChange} /> Home Office</label>
                         </div>
                     </div>
-
                     <div className="filter-group">
                         <h4>Cursos</h4>
                         <div className="checkbox-group scrollable">
@@ -288,16 +344,24 @@ const Vagas = () => {
 
                     <div className="filter-group">
                         <h4>Habilidades</h4>
+                        <input
+                            type="text"
+                            placeholder="Buscar habilidade..."
+                            className="search-input"
+                            value={skillSearchTerm}
+                            onChange={(e) => setSkillSearchTerm(e.target.value)}
+                            style={{ marginBottom: '15px' }}
+                        />
                         <div className="checkbox-group scrollable">
-                            {habilidadesFiltro.map(skill => (
-                                <label key={skill}>
+                            {filteredSkillsForDisplay.map(skill => (
+                                <label key={skill.id}>
                                     <input
                                         type="checkbox"
                                         name="skill"
-                                        value={skill}
-                                        checked={filters.skills.includes(skill)}
+                                        value={skill.nome} 
+                                        checked={filters.skills.includes(skill.nome)}
                                         onChange={handleInputChange}
-                                    /> {skill}
+                                    /> {skill.nome}
                                 </label>
                             ))}
                         </div>
@@ -312,6 +376,10 @@ const Vagas = () => {
                         vagas.map(vaga => <JobCard key={vaga.id} vaga={vaga} />)
                     ) : (
                         !loading && !error && <p className="no-results">Nenhuma vaga encontrada com os filtros selecionados.</p>
+                    )}
+
+                    {!loading && !error && (
+                        <PaginationControls />
                     )}
                 </main>
             </div>
