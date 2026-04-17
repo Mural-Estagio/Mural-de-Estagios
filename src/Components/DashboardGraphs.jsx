@@ -41,7 +41,7 @@ const DashboardGraphs = ({ vagas, cursos, loading }) => {
     const vagasPorCurso = useMemo(() => {
         if (loading || cursos.length === 0 || vagas.length === 0) return [];
         const cursoMap = cursos.reduce((acc, curso) => {
-            acc[curso.sigla] = curso.nomeCompleto;
+            acc[curso.sigla] = curso.nome;
             return acc;
         }, {});
 

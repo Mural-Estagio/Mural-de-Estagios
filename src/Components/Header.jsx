@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; 
+import { faSearch, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Header = ({ toggleMobileMenu, documentos }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -10,21 +10,21 @@ const Header = ({ toggleMobileMenu, documentos }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        setIsLoggedIn(!!token); 
+        setIsLoggedIn(!!token);
     }, []);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         if (searchTerm.trim()) {
             navigate('/vagas', { state: { headerSearch: searchTerm } });
-            setSearchTerm(''); 
+            setSearchTerm('');
         }
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('authToken'); 
-        setIsLoggedIn(false); 
-        navigate('/'); 
+        localStorage.removeItem('authToken');
+        setIsLoggedIn(false);
+        navigate('/');
     };
 
     return (
@@ -34,11 +34,11 @@ const Header = ({ toggleMobileMenu, documentos }) => {
                     <FontAwesomeIcon icon={faBars} />
                 </button>
 
-               <div className="navbar-left">
+                <div className="navbar-left">
                     <a href="/" className="nav-logo">Mural de Estágios</a>
                 </div>
 
-               <div className="navbar-links">
+                <div className="navbar-links">
                     <a href="/vagas" className="nav-link">Vagas</a>
                     <div className="dropdown">
                         <span className="nav-link">
@@ -46,8 +46,8 @@ const Header = ({ toggleMobileMenu, documentos }) => {
                         </span>
                         <div className="dropdown-content">
                             {documentos && documentos.map(doc => (
-                                <a 
-                                    key={doc} 
+                                <a
+                                    key={doc}
                                     href={doc === "Estágio Obrigatório" ? "/documentos-obrigatorios" : "/documentos-nao-obrigatorios"}
                                 >
                                     {doc}
@@ -55,7 +55,7 @@ const Header = ({ toggleMobileMenu, documentos }) => {
                             ))}
                         </div>
                     </div>
-                  
+
 
                     <a href="/curriculo" className="nav-link">Currículo</a>
                 </div>
@@ -75,10 +75,16 @@ const Header = ({ toggleMobileMenu, documentos }) => {
 
                     {/* Botão de Logout Condicional */}
                     {isLoggedIn && (
-                        <button className="logout-button" onClick={handleLogout} title="Sair">
-                            <FontAwesomeIcon icon={faSignOutAlt} />
-                            <span>Sair</span>
-                        </button>
+                        <>
+                            <button className="logout-button" onClick={handleLogout} title="Sair">
+                                <FontAwesomeIcon icon={faSignOutAlt} />
+                                <span>Sair</span>
+                            </button>
+                            <a href="/admin/cadastrar" className="nav-link" title="PainelAdmin">
+                                <FontAwesomeIcon icon={faSignOutAlt} />
+                                <span>Admin</span>
+                            </a>
+                        </>
                     )}
                 </div>
             </nav>

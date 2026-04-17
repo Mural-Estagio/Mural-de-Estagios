@@ -95,17 +95,13 @@ const HomePage = ({ cursos }) => {
                 <div className="section-container">
                     <div className="course-cards-grid">
                         {/* Mapeia a prop 'cursos' (lista de objetos) */}
-                        {cursos && cursos.map(curso => (
                             <a
                                 // Usa o nomeCompleto para o filtro e a sigla (ou id) para a key
-                                href={`/vagas?curso=${encodeURIComponent(curso.nomeCompleto)}`} 
-                                key={curso.id || curso.sigla}
+                                href={`/vagas`} 
                                 className="course-card"
                             >
-                                <h3>{curso.nomeCompleto}</h3>
                                 <span>Vagas <FontAwesomeIcon icon={faArrowRight} /></span>
                             </a>
-                        ))}
                     </div>
                 </div>
             </AnimatedSection>

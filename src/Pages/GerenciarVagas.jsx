@@ -40,7 +40,7 @@ const GerenciarVagas = () => {
         };
 
         try {
-            const response = await api.get('/vagas/admin/filtrar', { params });
+            const response = await api.get('/vagas/admin/filter', { params });
             setVagas(response.data.content);
             setTotalPages(response.data.totalPages);
             setError(null);

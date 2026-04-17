@@ -22,6 +22,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response, 
   (error) => {
+    console.log('Interceptor error:', error);
     if (error.response && error.response.status === 401) {
         localStorage.removeItem('authToken');
         window.location.href = '/admin/login'; 

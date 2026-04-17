@@ -14,7 +14,7 @@ import FormularioHabilidade from '../Components/FormularioHabilidade';
 
 const FormularioCurso = ({ onClose }) => {
     const [cursos, setCursos] = useState([]);
-    const [nomeCompleto, setNomeCompleto] = useState('');
+    const [nome, setNome] = useState('');
     const [sigla, setSigla] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -35,8 +35,10 @@ const FormularioCurso = ({ onClose }) => {
         e.preventDefault();
         setError('');
         try {
-            await api.post('/cursos', { nomeCompleto, sigla });
-            setNomeCompleto('');
+            let codigo = sigla;
+            let status = "ATIVO";
+            await api.post('/cursos', { nome, codigo, status });
+            setNome('');
             setSigla('');
             fetchCursos(); 
         } catch (err) { 
@@ -68,7 +70,7 @@ const FormularioCurso = ({ onClose }) => {
             <h2>Gerenciar Cursos</h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit} className="form-fields">
-                <label>Nome Completo <input type="text" value={nomeCompleto} onChange={(e) => setNomeCompleto(e.target.value)} required /></label>
+                <label>Nome Completo <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required /></label>
                 <label>Sigla (ex: ADS) <input type="text" value={sigla} onChange={(e) => setSigla(e.target.value)} required /></label>
                 <button type="submit" className="submit-button">ADICIONAR CURSO</button>
             </form>
@@ -78,7 +80,7 @@ const FormularioCurso = ({ onClose }) => {
                 <ul className="curso-list">
                     {cursos.map(curso => (
                         <li key={curso.id}>
-                            <span>{curso.nomeCompleto} ({curso.sigla})</span>
+                            <span>{curso.nome} ({curso.codigo})</span>
                             <button onClick={() => handleDelete(curso.id)} className="delete-btn">Excluir</button>
                         </li>
                     ))}
@@ -102,7 +104,7 @@ const AdmCadastrar = () => {
         setLoading(true);
         try {
             const [vagasRes, cursosRes] = await Promise.all([
-                api.get('/vagas/admin/filtrar', { params: { size: 1000 } }), 
+                api.get('/vagas/admin/filter', { params: { size: 1000 } }), 
                 api.get('/cursos')
             ]);
             setVagas(vagasRes.data.content || []);
