@@ -228,7 +228,8 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
                 responsabilidades: vagaParaEditar.responsabilidades || [],
                 dataPublicacao: vagaParaEditar.dataPublicacao ? new Date(vagaParaEditar.dataPublicacao).toISOString().split('T')[0] : '',
             });
-            setCursosSelecionados(vagaParaEditar.cursosAlvo || []);
+            setCursosSelecionados(vagaParaEditar.cursosAlvoIds || []);
+            setHabilidadesSelecionadas(vagaParaEditar.habilidadesIds || []);
             setFile(null);
             setError('');
         } else {
@@ -264,9 +265,10 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
             return;
         }
 
-        const cursosAlvoIds = cursosSelecionados
+        const cursosAlvoIds = cursosSelecionados;
+        const habilidadesIds = habilidadesSelecionadas;
 
-        const vagaDTO = { ...formData, cursosAlvoIds, habilidades: habilidadesSelecionadas };
+        const vagaDTO = { ...formData, cursosAlvoIds, habilidadesIds};
 
         try {
             if (isEditMode) {
