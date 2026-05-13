@@ -185,7 +185,7 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
     const estadoInicialForm = {
         empresa: '', titulo: '', remuneracao: '', periodo: '', canal: '',
         link: '', beneficios: [], requisitos: [], modelo: 'PRESENCIAL',
-        diferenciais: [], responsabilidades: [],
+        diferenciais: [], responsabilidades: [], turnos: [],
         dataPublicacao: new Date().toISOString().split('T')[0],
         statusVaga: 'ABERTO',
     };
@@ -211,12 +211,12 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
     }, []);
 
     useEffect(() => {
-    api.get('/habilidades')
-        .then(response => {
-            setHabilidadesDisponiveis(response.data);
-        })
-        .catch(err => console.error("Erro ao buscar habilidades", err));
-}, []);
+        api.get('/habilidades')
+            .then(response => {
+                setHabilidadesDisponiveis(response.data);
+            })
+            .catch(err => console.error("Erro ao buscar habilidades", err));
+    }, []);
 
     useEffect(() => {
         if (isEditMode) {
@@ -246,6 +246,17 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleTurnoChange = (e) => {
+        const { value, checked } = e.target;
+
+        setFormData(prev => ({
+            ...prev,
+            turnos: checked
+                ? [...prev.turnos, value]
+                : prev.turnos.filter(turno => turno !== value)
+        }));
+    };
+
     const handleTagChange = (fieldName, newItems) => {
         setFormData(prev => ({ ...prev, [fieldName]: newItems }));
     };
@@ -268,7 +279,7 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
         const cursosAlvoIds = cursosSelecionados;
         const habilidadesIds = habilidadesSelecionadas;
 
-        const vagaDTO = { ...formData, cursosAlvoIds, habilidadesIds};
+        const vagaDTO = { ...formData, cursosAlvoIds, habilidadesIds };
 
         try {
             if (isEditMode) {
@@ -321,6 +332,52 @@ const FormularioVaga = ({ onClose, onSuccess, vagaParaEditar }) => {
                     <label>Data de Publicação
                         <input type="date" name="dataPublicacao" value={formData.dataPublicacao} onChange={handleChange} required />
                     </label>
+
+                    {/*Sim, isso foi totalmente vibecoded. Não manjo de front-end. Mas funciona :p. Sinta-se livre pra distribuir o código melhor ao criar um elemento css em um arquivo css separado e afins */}
+                    <div className="turnos-container">
+                        <span style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+                            Turnos
+                        </span>
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: '20px',
+                                marginTop: '10px',
+                                flexWrap: 'wrap'
+                            }}
+                        >
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <input
+                                    type="checkbox"
+                                    value="MANHA"
+                                    checked={formData.turnos.includes('MANHA')}
+                                    onChange={handleTurnoChange}
+                                />
+                                Manhã
+                            </label>
+
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <input
+                                    type="checkbox"
+                                    value="TARDE"
+                                    checked={formData.turnos.includes('TARDE')}
+                                    onChange={handleTurnoChange}
+                                />
+                                Tarde
+                            </label>
+
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <input
+                                    type="checkbox"
+                                    value="NOITE"
+                                    checked={formData.turnos.includes('NOITE')}
+                                    onChange={handleTurnoChange}
+                                />
+                                Noite
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </fieldset>
 

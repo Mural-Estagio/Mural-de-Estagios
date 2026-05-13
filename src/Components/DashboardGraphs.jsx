@@ -23,8 +23,8 @@ const BarChart = ({ title, data }) => {
                             <div key={index} className="bar-item" title={`${item.label}: ${item.value}`}>
                                 <span className="bar-label">{item.label}</span>
                                 <div className="bar-wrapper">
-                                    <div 
-                                        className="bar-fill" 
+                                    <div
+                                        className="bar-fill"
                                         style={{ width: `${percent}%` }}
                                     >
                                         {item.value}
@@ -41,22 +41,22 @@ const DashboardGraphs = ({ vagas, cursos, loading }) => {
     const vagasPorCurso = useMemo(() => {
         if (loading || cursos.length === 0 || vagas.length === 0) return [];
         const cursoMap = cursos.reduce((acc, curso) => {
-            acc[curso.sigla] = curso.nome;
+            acc[curso.id] = curso.codigo; //Trocar para curso.nome faz aparecer o nome do curso por extenso na interface
             return acc;
         }, {});
 
         const contagem = {};
-        
+
         vagas.forEach(vaga => {
-            if (vaga.cursosAlvo) {
-                vaga.cursosAlvo.forEach(sigla => {
-                    contagem[sigla] = (contagem[sigla] || 0) + 1;
+            if (vaga.cursosAlvoIds) {
+                vaga.cursosAlvoIds.forEach(id => {
+                    contagem[id] = (contagem[id] || 0) + 1;
                 });
             }
         });
 
         return Object.entries(contagem).map(([sigla, valor]) => ({
-            label: cursoMap[sigla] || sigla, 
+            label: cursoMap[sigla] || sigla,
             value: valor
         }));
     }, [vagas, cursos, loading]);
@@ -68,7 +68,7 @@ const DashboardGraphs = ({ vagas, cursos, loading }) => {
             HIBRIDO: 0,
             HOME_OFFICE: 0
         };
-        
+
         vagas.forEach(vaga => {
             if (vaga.modelo && contagem.hasOwnProperty(vaga.modelo)) {
                 contagem[vaga.modelo]++;
@@ -84,7 +84,7 @@ const DashboardGraphs = ({ vagas, cursos, loading }) => {
 
 
     if (loading) {
-        return null; 
+        return null;
     }
 
     return (

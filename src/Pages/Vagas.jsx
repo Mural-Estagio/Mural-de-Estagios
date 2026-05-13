@@ -179,15 +179,15 @@ const Vagas = () => {
                 modelos: Object.keys(filters.modelo)
                     .filter(k => filters.modelo[k])
                     .map(m => m.toUpperCase()),
-                periodos: Object.keys(filters.shift)
-                    .filter(k => filters.shift[k]),
+                turnos: Object.keys(filters.shift)
+                    .filter(k => filters.shift[k]).map(m => m.toUpperCase()),
                 page: currentPage,
                 size: VAGAS_PER_PAGE
             };
 
             if (params.cursosAlvoIds.length === 0) delete params.cursosAlvoIds;
             if (params.modelos.length === 0) delete params.modelos;
-            if (params.periodos.length === 0) delete params.periodos;
+            if (params.turnos.length === 0) delete params.turnos;
 
             const paramsSerializer = {
                 indexes: null
@@ -312,7 +312,7 @@ const Vagas = () => {
                         <input
                             type="text"
                             name="searchTerm"
-                            placeholder="Buscar por cargo, empresa ou skill..."
+                            placeholder="Buscar por cargo, empresa..."
                             className="search-input"
                             value={filters.searchTerm}
                             onChange={handleInputChange}
