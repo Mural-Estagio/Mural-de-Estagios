@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import '../Styles/VagaDetalhada.css'; 
+import '../Styles/VagaDetalhada.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCalendarAlt, faPrint, faMoneyBillWave,
     faClock, faMapMarkerAlt, faBriefcase, faBuilding, faListCheck,
     faStar, faAward, faUsers, faExternalLinkAlt, faArrowLeft,
-    faFileDownload 
+    faFileDownload
 } from '@fortawesome/free-solid-svg-icons';
 import { api } from '../Service/api';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -17,7 +17,7 @@ const VagaDetalhada = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentUrl, setCurrentUrl] = useState('');
-    const [cursoMap, setCursoMap] = useState({}); 
+    const [cursoMap, setCursoMap] = useState({});
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -28,7 +28,7 @@ const VagaDetalhada = () => {
             try {
                 const response = await api.get('/cursos');
                 const map = response.data.reduce((acc, curso) => {
-                    acc[curso.sigla] = curso.nomeCompleto; 
+                    acc[curso.sigla] = curso.nomeCompleto;
                     return acc;
                 }, {});
                 setCursoMap(map);
@@ -55,7 +55,7 @@ const VagaDetalhada = () => {
             }
         };
 
-        fetchCursos(); 
+        fetchCursos();
         fetchVagaDetalhada();
     }, [vagaId]);
 
@@ -170,12 +170,12 @@ const VagaDetalhada = () => {
                         <h3><FontAwesomeIcon icon={faFileDownload} /> Documento Anexo</h3>
                         <p>A empresa disponibilizou um documento com mais detalhes sobre a vaga. Clique no botão abaixo para visualizá-lo.</p>
 
-                        <a 
-                            href={vaga.folderUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                        <a
+                            href={vaga.folderUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="ir-para-vaga-btn primary"
-                            style={{maxWidth: '300px', margin: '10px auto 0 auto'}} 
+                            style={{ maxWidth: '300px', margin: '10px auto 0 auto' }}
                         >
                             <FontAwesomeIcon icon={faFileDownload} /> Baixar Anexo
                         </a>
@@ -211,6 +211,9 @@ const VagaDetalhada = () => {
                         <h4>Compartilhe esta vaga (QR Code):</h4>
                         {currentUrl && <QRCodeCanvas value={currentUrl} size={110} level="M" />}
                     </div>
+                </div>
+                <div>
+                    <p id='id-vaga'>Id da vaga: {vagaId}</p>
                 </div>
             </div>
         </div>

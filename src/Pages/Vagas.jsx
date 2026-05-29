@@ -147,10 +147,6 @@ const Vagas = () => {
                 const cursos = cursosRes.data;
                 const map = {};
                 const filtro = [];
-                /* cursos.forEach(curso => {
-                     map[curso.nome] = curso.codigo; 
-                     filtro.push(curso.codigo);
-                 }); */
                 setCursoMap(map);
                 setCursosFiltro(cursos);
 
@@ -176,6 +172,7 @@ const Vagas = () => {
             const params = {
                 termo: filters.searchTerm.trim() || null,
                 cursosAlvoIds: filters.courses,
+                habilidadesIds: filters.skills,
                 modelos: Object.keys(filters.modelo)
                     .filter(k => filters.modelo[k])
                     .map(m => m.toUpperCase()),
@@ -186,6 +183,7 @@ const Vagas = () => {
             };
 
             if (params.cursosAlvoIds.length === 0) delete params.cursosAlvoIds;
+            if (params.habilidadesIds.length === 0) delete params.habilidadesIds;
             if (params.modelos.length === 0) delete params.modelos;
             if (params.turnos.length === 0) delete params.turnos;
 
@@ -197,18 +195,7 @@ const Vagas = () => {
                 const response = await api.get('/vagas/filter', { params, paramsSerializer });
                 if (!response.data) throw new Error('Nenhuma vaga encontrada');
 
-                let vagasFiltradas = response.data.content;
-                const { skills } = filters;
-                if (skills.length > 0) {
-                    vagasFiltradas = vagasFiltradas.filter(vaga =>
-                        skills.every(skill =>
-                            vaga.requisitos?.some(req => req.toLowerCase().includes(skill.toLowerCase())) ||
-                            vaga.diferenciais?.some(dif => dif.toLowerCase().includes(skill.toLowerCase()))
-                        )
-                    );
-                }
-
-                setVagas(vagasFiltradas);
+                setVagas(response.data.content);
                 setTotalPages(response.data.totalPages);
 
             } catch (error) {
@@ -368,8 +355,8 @@ const Vagas = () => {
                                     <input
                                         type="checkbox"
                                         name="skill"
-                                        value={skill.nome}
-                                        checked={filters.skills.includes(skill.nome)}
+                                        value={skill.id}
+                                        checked={filters.skills.includes(skill.id)}
                                         onChange={handleInputChange}
                                     /> {skill.nome}
                                 </label>
