@@ -8,6 +8,8 @@ import { faMapMarkerAlt, faPhone, faClock } from '@fortawesome/free-solid-svg-ic
 import logoFatec from '../Assets/fatec_logo_white.png';
 import logoCPS from '../Assets/cps_logo_white.png';
 
+let currentYear = new Date().getFullYear();
+
 const Footer = () => {
     return (
         <footer className="footer-container">
@@ -60,7 +62,7 @@ const Footer = () => {
 
             {/* Seção Inferior: Copyright e Login Admin */}
             <div className="footer-bottom">
-                <p>© 2002-2025 - Centro Paula Souza - Desenvolvido por FatecZL - Todos os direitos reservados.</p>
+                <p>© 2002-{currentYear} - Centro Paula Souza - Desenvolvido por FatecZL - Todos os direitos reservados.</p>
                 <Link to="/admin/Login" className="admin-login-link">
                     Login Administrador
                 </Link>
