@@ -10,33 +10,74 @@ const TagInput = ({ label, items, setItems }) => {
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
+
             const newItem = inputValue.trim();
+
             if (newItem && !items.includes(newItem)) {
                 setItems([...items, newItem]);
             }
+
             setInputValue('');
         }
     };
 
+    const handlePaste = (e) => {
+        const pastedText = e.clipboardData.getData('text');
+
+        if (!pastedText.includes('\n')) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const novosItens = pastedText
+            .split('\n')
+            .map(item =>
+                item
+                    .trim()
+                    .replace(/^[-•*]\s*/, '')     // Remove bullets
+                    .replace(/^\d+\.\s*/, '')    // Remove numbering (1. 2. 3.)
+            )
+            .filter(item => item.length > 0);
+
+        const itensUnicos = [
+            ...new Set([...items, ...novosItens])
+        ];
+
+        setItems(itensUnicos);
+        setInputValue('');
+    };
+
     const handleRemoveItem = (indexToRemove) => {
-        setItems(items.filter((_, index) => index !== indexToRemove));
+        setItems(
+            items.filter((_, index) => index !== indexToRemove)
+        );
     };
 
     return (
         <label className="tag-input-container">
-            {label} (Pressione Enter para adicionar)
+            {label} (Pressione Enter para adicionar ou cole uma lista)
+
             <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Digite um item e pressione Enter..."
+                onPaste={handlePaste}
+                placeholder="Digite um item ou cole várias linhas..."
             />
+
             <div className="tag-input-area">
                 {items.map((item, index) => (
                     <span key={index} className="tag-item">
                         {item}
-                        <button type="button" onClick={() => handleRemoveItem(index)}>×</button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveItem(index)}
+                        >
+                            ×
+                        </button>
                     </span>
                 ))}
             </div>

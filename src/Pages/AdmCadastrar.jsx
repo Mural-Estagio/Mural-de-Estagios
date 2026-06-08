@@ -152,7 +152,7 @@ const AdmCadastrar = () => {
                     <FontAwesomeIcon icon={faWrench} /> GERENCIAR HABILIDADES
                 </button>
                 <button className="action-button" onClick={() => setIsAdminModalOpen(true)}>
-                    <FontAwesomeIcon icon={faUserPlus} /> NOVO USUÁRIO
+                    <FontAwesomeIcon icon={faUserPlus} /> GERENCIAR USUÁRIOS
                 </button>
             </div>
             

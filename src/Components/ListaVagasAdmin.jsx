@@ -68,7 +68,7 @@ const ListaVagasAdmin = ({ vagas, onSuccessRefresh, onEdit }) => {
                                     </button>
                                     <button 
                                         className="btn-action close" 
-                                        title="Fechar Vaga (Inativar)"
+                                        title={vaga.statusVaga === 'FECHADO' ? "Para reativar a vaga, edite ela." : "Fechar vaga"}
                                         onClick={() => handleCloseVaga(vaga.id)}
                                         disabled={vaga.statusVaga === 'FECHADO'}
                                     >
